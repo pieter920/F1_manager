@@ -5,13 +5,13 @@ using Pomelo.EntityFrameworkCore.MySql.Scaffolding.Internal;
 
 namespace F1_managerApi.Models;
 
-public partial class BucketListDbContext : DbContext
+public partial class F1_ManagerDbContext : DbContext
 {
-    public BucketListDbContext()
+    public F1_ManagerDbContext()
     {
     }
 
-    public BucketListDbContext(DbContextOptions<BucketListDbContext> options)
+    public F1_ManagerDbContext(DbContextOptions<F1_ManagerDbContext> options)
         : base(options)
     {
     }
