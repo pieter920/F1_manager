@@ -1,0 +1,234 @@
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Pomelo.EntityFrameworkCore.MySql.Scaffolding.Internal;
+
+namespace F1_managerApi.Models;
+
+public partial class BucketListDbContext : DbContext
+{
+    public BucketListDbContext()
+    {
+    }
+
+    public BucketListDbContext(DbContextOptions<BucketListDbContext> options)
+        : base(options)
+    {
+    }
+
+    public virtual DbSet<Auto> Autos { get; set; }
+
+    public virtual DbSet<Driver> Drivers { get; set; }
+
+    public virtual DbSet<Raceweekend> Raceweekends { get; set; }
+
+    public virtual DbSet<Raceweekendhasdriver> Raceweekendhasdrivers { get; set; }
+
+    public virtual DbSet<Seizoen> Seizoens { get; set; }
+
+    public virtual DbSet<Team> Teams { get; set; }
+
+    public virtual DbSet<Teamhasauto> Teamhasautos { get; set; }
+
+    public virtual DbSet<Teamhasdriver> Teamhasdrivers { get; set; }
+
+    public virtual DbSet<Teamhasseizoen> Teamhasseizoens { get; set; }
+
+    public virtual DbSet<Track> Tracks { get; set; }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseMySql("server=localhost;database=f1_manager;user=root;password=1234", Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.44-mysql"));
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder
+            .UseCollation("utf8mb4_0900_ai_ci")
+            .HasCharSet("utf8mb4");
+
+        modelBuilder.Entity<Auto>(entity =>
+        {
+            entity.HasKey(e => e.Idauto).HasName("PRIMARY");
+
+            entity.ToTable("auto");
+
+            entity.Property(e => e.Idauto).HasColumnName("IDAuto");
+            entity.Property(e => e.NaamAuto).HasMaxLength(64);
+        });
+
+        modelBuilder.Entity<Driver>(entity =>
+        {
+            entity.HasKey(e => e.Iddriver).HasName("PRIMARY");
+
+            entity.ToTable("driver");
+
+            entity.Property(e => e.Iddriver).HasColumnName("IDDriver");
+            entity.Property(e => e.AchternaamDriver).HasMaxLength(64);
+            entity.Property(e => e.NationaliteitDriver).HasMaxLength(64);
+            entity.Property(e => e.VoornaamDriver).HasMaxLength(64);
+        });
+
+        modelBuilder.Entity<Raceweekend>(entity =>
+        {
+            entity.HasKey(e => e.IdraceWeekend).HasName("PRIMARY");
+
+            entity.ToTable("raceweekend");
+
+            entity.HasIndex(e => e.Fkseizoen, "FKSeizoen");
+
+            entity.HasIndex(e => e.Fktrack, "FKTrack");
+
+            entity.Property(e => e.IdraceWeekend).HasColumnName("IDRaceWeekend");
+            entity.Property(e => e.Fkseizoen).HasColumnName("FKSeizoen");
+            entity.Property(e => e.Fktrack).HasColumnName("FKTrack");
+
+            entity.HasOne(d => d.FkseizoenNavigation).WithMany(p => p.Raceweekends)
+                .HasForeignKey(d => d.Fkseizoen)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("raceweekend_ibfk_1");
+
+            entity.HasOne(d => d.FktrackNavigation).WithMany(p => p.Raceweekends)
+                .HasForeignKey(d => d.Fktrack)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("raceweekend_ibfk_2");
+        });
+
+        modelBuilder.Entity<Raceweekendhasdriver>(entity =>
+        {
+            entity.HasKey(e => e.IdraceWeekendHasDriver).HasName("PRIMARY");
+
+            entity.ToTable("raceweekendhasdriver");
+
+            entity.HasIndex(e => e.Fkdriver, "FKDriver");
+
+            entity.HasIndex(e => e.FkraceWeekend, "FKRaceWeekend");
+
+            entity.Property(e => e.IdraceWeekendHasDriver).HasColumnName("IDRaceWeekendHasDriver");
+            entity.Property(e => e.Fkdriver).HasColumnName("FKDriver");
+            entity.Property(e => e.FkraceWeekend).HasColumnName("FKRaceWeekend");
+            entity.Property(e => e.Positie).HasColumnName("positie");
+            entity.Property(e => e.Punten).HasColumnName("punten");
+
+            entity.HasOne(d => d.FkdriverNavigation).WithMany(p => p.Raceweekendhasdrivers)
+                .HasForeignKey(d => d.Fkdriver)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("raceweekendhasdriver_ibfk_1");
+
+            entity.HasOne(d => d.FkraceWeekendNavigation).WithMany(p => p.Raceweekendhasdrivers)
+                .HasForeignKey(d => d.FkraceWeekend)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("raceweekendhasdriver_ibfk_2");
+        });
+
+        modelBuilder.Entity<Seizoen>(entity =>
+        {
+            entity.HasKey(e => e.Idseizoen).HasName("PRIMARY");
+
+            entity.ToTable("seizoen");
+
+            entity.Property(e => e.Idseizoen).HasColumnName("IDSeizoen");
+            entity.Property(e => e.NaamSeizoen).HasMaxLength(64);
+        });
+
+        modelBuilder.Entity<Team>(entity =>
+        {
+            entity.HasKey(e => e.Idteam).HasName("PRIMARY");
+
+            entity.ToTable("team");
+
+            entity.Property(e => e.Idteam).HasColumnName("IDTeam");
+            entity.Property(e => e.NaamTeam).HasMaxLength(128);
+            entity.Property(e => e.NationaliteitTeam).HasMaxLength(64);
+        });
+
+        modelBuilder.Entity<Teamhasauto>(entity =>
+        {
+            entity.HasKey(e => e.IdteamHasAuto).HasName("PRIMARY");
+
+            entity.ToTable("teamhasauto");
+
+            entity.HasIndex(e => e.Fkauto, "FKAuto");
+
+            entity.HasIndex(e => e.Fkteam, "FKTeam");
+
+            entity.Property(e => e.IdteamHasAuto).HasColumnName("IDTeamHasAuto");
+            entity.Property(e => e.Fkauto).HasColumnName("FKAuto");
+            entity.Property(e => e.Fkteam).HasColumnName("FKTeam");
+
+            entity.HasOne(d => d.FkautoNavigation).WithMany(p => p.Teamhasautos)
+                .HasForeignKey(d => d.Fkauto)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("teamhasauto_ibfk_1");
+
+            entity.HasOne(d => d.FkteamNavigation).WithMany(p => p.Teamhasautos)
+                .HasForeignKey(d => d.Fkteam)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("teamhasauto_ibfk_2");
+        });
+
+        modelBuilder.Entity<Teamhasdriver>(entity =>
+        {
+            entity.HasKey(e => e.IdteamHasDriver).HasName("PRIMARY");
+
+            entity.ToTable("teamhasdriver");
+
+            entity.HasIndex(e => e.Fkdriver, "FKDriver");
+
+            entity.HasIndex(e => e.Fkteam, "FKTeam");
+
+            entity.Property(e => e.IdteamHasDriver).HasColumnName("IDTeamHasDriver");
+            entity.Property(e => e.Fkdriver).HasColumnName("FKDriver");
+            entity.Property(e => e.Fkteam).HasColumnName("FKTeam");
+
+            entity.HasOne(d => d.FkdriverNavigation).WithMany(p => p.Teamhasdrivers)
+                .HasForeignKey(d => d.Fkdriver)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("teamhasdriver_ibfk_2");
+
+            entity.HasOne(d => d.FkteamNavigation).WithMany(p => p.Teamhasdrivers)
+                .HasForeignKey(d => d.Fkteam)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("teamhasdriver_ibfk_1");
+        });
+
+        modelBuilder.Entity<Teamhasseizoen>(entity =>
+        {
+            entity.HasKey(e => e.IdteamHasSeizoen).HasName("PRIMARY");
+
+            entity.ToTable("teamhasseizoen");
+
+            entity.HasIndex(e => e.Fkseizoen, "FKSeizoen");
+
+            entity.HasIndex(e => e.Fkteam, "FKTeam");
+
+            entity.Property(e => e.IdteamHasSeizoen).HasColumnName("IDTeamHasSeizoen");
+            entity.Property(e => e.Fkseizoen).HasColumnName("FKSeizoen");
+            entity.Property(e => e.Fkteam).HasColumnName("FKTeam");
+
+            entity.HasOne(d => d.FkseizoenNavigation).WithMany(p => p.Teamhasseizoens)
+                .HasForeignKey(d => d.Fkseizoen)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("teamhasseizoen_ibfk_1");
+
+            entity.HasOne(d => d.FkteamNavigation).WithMany(p => p.Teamhasseizoens)
+                .HasForeignKey(d => d.Fkteam)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("teamhasseizoen_ibfk_2");
+        });
+
+        modelBuilder.Entity<Track>(entity =>
+        {
+            entity.HasKey(e => e.Idtrack).HasName("PRIMARY");
+
+            entity.ToTable("track");
+
+            entity.Property(e => e.Idtrack).HasColumnName("IDtrack");
+            entity.Property(e => e.LandTrack).HasMaxLength(64);
+            entity.Property(e => e.NaamTrack).HasMaxLength(64);
+        });
+
+        OnModelCreatingPartial(modelBuilder);
+    }
+
+    partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+}
