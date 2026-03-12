@@ -23,11 +23,34 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 //get all drivers
-app.MapGet("/Driver", async (F1_ManagerDbContext db) =>
+app.MapGet("get Drivers", async (F1_ManagerDbContext db) =>
 {
     var items = await db.Drivers.ToListAsync();
     return Results.Ok(items);
 });
-
+//get all teams
+app.MapGet("get Teams", async (F1_ManagerDbContext db) =>
+{
+    var items = await db.Teams.ToListAsync();
+    return Results.Ok(items);
+});
+//get all seasons
+app.MapGet("get seasons", async (F1_ManagerDbContext db) =>
+{
+    var items = await db.Seizoens.ToListAsync();
+    return Results.Ok(items);
+});
+//get all raceweekends for season
+app.MapGet("get raceweekends per season", async (int seasonId, F1_ManagerDbContext db) =>
+{
+    var items = await db.Raceweekends.Where(pbl => pbl.Fkseizoen == seasonId).ToListAsync();
+    return Results.Ok(items);
+});
+//get all raceweekends for track
+app.MapGet("get raceweekends per track", async (int TrackID, F1_ManagerDbContext db) =>
+{
+    var items = await db.Raceweekends.Where(pbl => pbl.Fktrack == TrackID).ToListAsync();
+    return Results.Ok(items);
+});
 
 app.Run();
