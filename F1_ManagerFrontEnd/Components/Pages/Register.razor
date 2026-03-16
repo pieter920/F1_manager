@@ -1,6 +1,39 @@
 ﻿@page "/register"
-<h3>Register</h3>
+@inject HttpClient Http
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
+
+<h3>register</h3>
+
+<div class="mb-3 mt-3">
+    <label for="username">Gebruikersnaam:</label>
+    <input type="text" class="form-control" id="username" placeholder="gebruikersnaam" @bind="_username" />
+</div>
+
+<div class="mb-3">
+    <label for="password">Wachtwoord:</label>
+    <input type="password" class="form-control" id="password" placeholder="wachtwoord" @bind="_password" />
+</div>
+
+<button class="btn btn-primary" @onclick="RegisterUser">register</button>
 
 @code {
+    private string _username = "";
+    private string _password = "";
 
+    private async Task RegisterUser()
+    {
+        var url = $"/user/register?username={Uri.EscapeDataString(_username)}&password={Uri.EscapeDataString(_password)}";
+        var response = await Http.PostAsync(url, null);
+
+        if (response.IsSuccessStatusCode)
+        {
+            Navigation.NavigateTo("/login");
+        }
+        else
+        {
+            await JS.InvokeVoidAsync("alert", "Onbekende fout bij register.");
+        }
+    }
 }

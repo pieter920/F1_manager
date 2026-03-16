@@ -17,7 +17,8 @@
     <input type="password" class="form-control" id="password" placeholder="wachtwoord" @bind="_password" />
 </div>
 
-<button class="btn btn-primary" @onclick="LoginUser">Log in</button>
+<button class="btn btn-primary" @onclick="() => LoginUser()">Log in</button>
+<button class="btn btn-primary" @onclick="() => RegistreerUser()">Registreer</button>
 
 @code {
     private string _username = "";
@@ -25,6 +26,26 @@
 
     public async Task LoginUser()
     {
+        Console.WriteLine( "Login pressed" );
+        var url = $"/user/check?username={Uri.EscapeDataString(_username)}&password={Uri.EscapeDataString(_password)}";
+        var response = await Http.GetAsync(url);
+
+        if (response.IsSuccessStatusCode)
+        {
+            Navigation.NavigateTo("/home");
+        }
+        else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            await JS.InvokeVoidAsync("alert", "Ongeldige gebruikersnaam of wachtwoord.");
+        }
+        else
+        {
+            await JS.InvokeVoidAsync("alert", "Er is een fout opgetreden. Probeer het later opnieuw.");
+        }	
+    }
+    public async Task RegistreerUser()
+    {
+        Navigation.NavigateTo("/register");
         
     }
 }
