@@ -52,5 +52,11 @@ app.MapGet("get raceweekends per track", async (int TrackID, F1_ManagerDbContext
     var items = await db.Raceweekends.Where(pbl => pbl.Fktrack == TrackID).ToListAsync();
     return Results.Ok(items);
 });
+//get all auto's
+app.MapGet("get auto's", async (F1_ManagerDbContext db) =>
+{
+    var items = await db.Autos.ToListAsync();
+    return Results.Ok(items);
+});
 
 app.Run();
