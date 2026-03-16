@@ -1,3 +1,4 @@
 <Solution>
   <Project Path="F1_managerApi/F1_managerApi.csproj" />
+  <Project Path="F1_ManagerFrontEnd/F1_ManagerFrontEnd.csproj" Id="9e9e6321-f4ca-4e0b-9ae8-221444517623" />
 </Solution>
