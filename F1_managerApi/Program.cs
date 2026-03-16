@@ -24,49 +24,49 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 //basic get request
 //get all drivers
-app.MapGet("get Drivers", async (F1_ManagerDbContext db) =>
+app.MapGet("get/Drivers", async (F1_ManagerDbContext db) =>
 {
     var items = await db.Drivers.ToListAsync();
     return Results.Ok(items);
 });
 //get all teams
-app.MapGet("get Teams", async (F1_ManagerDbContext db) =>
+app.MapGet("get/Teams", async (F1_ManagerDbContext db) =>
 {
     var items = await db.Teams.ToListAsync();
     return Results.Ok(items);
 });
 //get all seasons
-app.MapGet("get seasons", async (F1_ManagerDbContext db) =>
+app.MapGet("get/seasons", async (F1_ManagerDbContext db) =>
 {
     var items = await db.Seizoens.ToListAsync();
     return Results.Ok(items);
 });
 //get all raceweekends for season
-app.MapGet("get raceweekends per season", async (int seasonId, F1_ManagerDbContext db) =>
+app.MapGet("get/raceweekends/per/season", async (int seasonId, F1_ManagerDbContext db) =>
 {
     var items = await db.Raceweekends.Where(pbl => pbl.Fkseizoen == seasonId).ToListAsync();
     return Results.Ok(items);
 });
 //get all raceweekends for track
-app.MapGet("get raceweekends per track", async (int TrackID, F1_ManagerDbContext db) =>
+app.MapGet("get/raceweekends/per/track", async (int TrackID, F1_ManagerDbContext db) =>
 {
     var items = await db.Raceweekends.Where(pbl => pbl.Fktrack == TrackID).ToListAsync();
     return Results.Ok(items);
 });
 //get all auto's
-app.MapGet("get auto's", async (F1_ManagerDbContext db) =>
+app.MapGet("get/auto's", async (F1_ManagerDbContext db) =>
 {
     var items = await db.Autos.ToListAsync();
     return Results.Ok(items);
 });
 //get all track's
-app.MapGet("get Track's", async (F1_ManagerDbContext db) =>
+app.MapGet("get/Track's", async (F1_ManagerDbContext db) =>
 {
     var items = await db.Tracks.ToListAsync();
     return Results.Ok(items);
 });
 //get track by id
-app.MapGet("get track per ID", async (int TrackID, F1_ManagerDbContext db) =>
+app.MapGet("get/track/per/ID", async (int TrackID, F1_ManagerDbContext db) =>
 {
     var items = await db.Tracks.Where(pbl => pbl.Idtrack == TrackID).ToListAsync();
     return Results.Ok(items);
@@ -74,7 +74,7 @@ app.MapGet("get track per ID", async (int TrackID, F1_ManagerDbContext db) =>
 
 //user checks and register
 //check
-app.MapGet("/user check", async (string username, string password, F1_ManagerDbContext db) =>
+app.MapGet("/user/check", async (string username, string password, F1_ManagerDbContext db) =>
 {
     var user = await db.Users
         .FirstOrDefaultAsync(u => u.NameUser == username && u.PassWordUser == password);
@@ -89,7 +89,7 @@ app.MapGet("/user check", async (string username, string password, F1_ManagerDbC
     });
 });
 //register
-app.MapPost("/user register", async (string username, string password, F1_ManagerDbContext db) =>
+app.MapPost("/user/register", async (string username, string password, F1_ManagerDbContext db) =>
 {
     var exists = await db.Users
     .AnyAsync(pbl => pbl.NameUser == username);
@@ -101,7 +101,7 @@ app.MapPost("/user register", async (string username, string password, F1_Manage
     db.Users.Add(User);
     await db.SaveChangesAsync();
 
-    return Results.Created($"/users/register", User);
+    return Results.Created($"/user_register", User);
 });
 //register
 
