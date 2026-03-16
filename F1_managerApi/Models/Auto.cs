@@ -11,5 +11,7 @@ public partial class Auto
 
     public string NaamAuto { get; set; } = null!;
 
-    public virtual ICollection<Teamhasauto> Teamhasautos { get; set; } = new List<Teamhasauto>();
+    public int Fkteam { get; set; }
+
+    public virtual Team FkteamNavigation { get; set; } = null!;
 }

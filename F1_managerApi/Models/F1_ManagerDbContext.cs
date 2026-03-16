@@ -28,17 +28,17 @@ public partial class F1_ManagerDbContext : DbContext
 
     public virtual DbSet<Team> Teams { get; set; }
 
-    public virtual DbSet<Teamhasauto> Teamhasautos { get; set; }
-
     public virtual DbSet<Teamhasdriver> Teamhasdrivers { get; set; }
 
     public virtual DbSet<Teamhasseizoen> Teamhasseizoens { get; set; }
 
     public virtual DbSet<Track> Tracks { get; set; }
 
+    public virtual DbSet<User> Users { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseMySql("server=localhost;database=f1_manager;user=root;password=1234", Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.44-mysql"));
+        => optionsBuilder.UseMySql("server=localhost;database=f1_manager;user=root;password=1234", Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.43-mysql"));
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -52,8 +52,16 @@ public partial class F1_ManagerDbContext : DbContext
 
             entity.ToTable("auto");
 
+            entity.HasIndex(e => e.Fkteam, "FKTeam");
+
             entity.Property(e => e.Idauto).HasColumnName("IDAuto");
+            entity.Property(e => e.Fkteam).HasColumnName("FKTeam");
             entity.Property(e => e.NaamAuto).HasMaxLength(64);
+
+            entity.HasOne(d => d.FkteamNavigation).WithMany(p => p.Autos)
+                .HasForeignKey(d => d.Fkteam)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("auto_ibfk_1");
         });
 
         modelBuilder.Entity<Driver>(entity =>
@@ -141,31 +149,6 @@ public partial class F1_ManagerDbContext : DbContext
             entity.Property(e => e.NationaliteitTeam).HasMaxLength(64);
         });
 
-        modelBuilder.Entity<Teamhasauto>(entity =>
-        {
-            entity.HasKey(e => e.IdteamHasAuto).HasName("PRIMARY");
-
-            entity.ToTable("teamhasauto");
-
-            entity.HasIndex(e => e.Fkauto, "FKAuto");
-
-            entity.HasIndex(e => e.Fkteam, "FKTeam");
-
-            entity.Property(e => e.IdteamHasAuto).HasColumnName("IDTeamHasAuto");
-            entity.Property(e => e.Fkauto).HasColumnName("FKAuto");
-            entity.Property(e => e.Fkteam).HasColumnName("FKTeam");
-
-            entity.HasOne(d => d.FkautoNavigation).WithMany(p => p.Teamhasautos)
-                .HasForeignKey(d => d.Fkauto)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("teamhasauto_ibfk_1");
-
-            entity.HasOne(d => d.FkteamNavigation).WithMany(p => p.Teamhasautos)
-                .HasForeignKey(d => d.Fkteam)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("teamhasauto_ibfk_2");
-        });
-
         modelBuilder.Entity<Teamhasdriver>(entity =>
         {
             entity.HasKey(e => e.IdteamHasDriver).HasName("PRIMARY");
@@ -225,6 +208,23 @@ public partial class F1_ManagerDbContext : DbContext
             entity.Property(e => e.Idtrack).HasColumnName("IDtrack");
             entity.Property(e => e.LandTrack).HasMaxLength(64);
             entity.Property(e => e.NaamTrack).HasMaxLength(64);
+        });
+
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.HasKey(e => e.IdUser).HasName("PRIMARY");
+
+            entity.ToTable("user");
+
+            entity.HasIndex(e => e.NameUser, "nameUser").IsUnique();
+
+            entity.Property(e => e.IdUser).HasColumnName("idUser");
+            entity.Property(e => e.NameUser)
+                .HasMaxLength(60)
+                .HasColumnName("nameUser");
+            entity.Property(e => e.PassWordUser)
+                .HasMaxLength(60)
+                .HasColumnName("passWordUser");
         });
 
         OnModelCreatingPartial(modelBuilder);

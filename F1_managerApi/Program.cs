@@ -72,6 +72,38 @@ app.MapGet("get track per ID", async (int TrackID, F1_ManagerDbContext db) =>
     return Results.Ok(items);
 });
 
+//user checks and register
+//check
+app.MapGet("/user check", async (string username, string password, F1_ManagerDbContext db) =>
+{
+    var user = await db.Users
+        .FirstOrDefaultAsync(u => u.NameUser == username && u.PassWordUser == password);
+
+    if (user == null)
+        return Results.Unauthorized();
+
+    return Results.Ok(new
+    {
+        UserId = user.IdUser,
+        Username = user.NameUser
+    });
+});
+//register
+app.MapPost("/user register", async (string username, string password, F1_ManagerDbContext db) =>
+{
+    var exists = await db.Users
+    .AnyAsync(pbl => pbl.NameUser == username);
+    if (exists)
+        return Results.Conflict("Acount already in F1_manager");
+    //zet in databank
+    var User = new User { NameUser = username, PassWordUser = password };
+
+    db.Users.Add(User);
+    await db.SaveChangesAsync();
+
+    return Results.Created($"/users/register", User);
+});
+//register
 
 
 app.Run();

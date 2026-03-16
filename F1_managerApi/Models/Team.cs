@@ -11,7 +11,7 @@ public partial class Team
 
     public string NationaliteitTeam { get; set; } = null!;
 
-    public virtual ICollection<Teamhasauto> Teamhasautos { get; set; } = new List<Teamhasauto>();
+    public virtual ICollection<Auto> Autos { get; set; } = new List<Auto>();
 
     public virtual ICollection<Teamhasdriver> Teamhasdrivers { get; set; } = new List<Teamhasdriver>();
 
