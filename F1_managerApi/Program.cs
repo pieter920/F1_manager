@@ -22,6 +22,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+//basic get request
 //get all drivers
 app.MapGet("get Drivers", async (F1_ManagerDbContext db) =>
 {
@@ -58,5 +59,19 @@ app.MapGet("get auto's", async (F1_ManagerDbContext db) =>
     var items = await db.Autos.ToListAsync();
     return Results.Ok(items);
 });
+//get all track's
+app.MapGet("get Track's", async (F1_ManagerDbContext db) =>
+{
+    var items = await db.Tracks.ToListAsync();
+    return Results.Ok(items);
+});
+//get track by id
+app.MapGet("get track per ID", async (int TrackID, F1_ManagerDbContext db) =>
+{
+    var items = await db.Tracks.Where(pbl => pbl.Idtrack == TrackID).ToListAsync();
+    return Results.Ok(items);
+});
+
+
 
 app.Run();
