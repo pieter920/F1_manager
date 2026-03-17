@@ -103,7 +103,8 @@ app.MapPost("/user/register", async (string username, string password, F1_Manage
 
     return Results.Created($"/user_register", User);
 });
-//register
+
+//filter on user ID
 
 
 app.Run();
