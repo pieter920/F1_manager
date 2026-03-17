@@ -3,7 +3,8 @@
 
 <div class="page">
     <div class="page">
-        @if (!NavManager.Uri.Contains("/login") && !NavManager.Uri.EndsWith("/") && !NavManager.Uri.EndsWith("/register"))
+        @if (!NavManager.Uri.Contains("/login") && !NavManager.Uri.EndsWith("/") 
+        && !NavManager.Uri.EndsWith("/register") && !NavManager.Uri.EndsWith("/CreateTeam"))
         {
             <div class="sidebar">
                 <NavMenu />

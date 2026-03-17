@@ -24,6 +24,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 //basic get request
 //get all drivers
+#region simple get request
+
 app.MapGet("get/Drivers", async (F1_ManagerDbContext db) =>
 {
     var items = await db.Drivers.ToListAsync();
@@ -75,8 +77,11 @@ app.MapGet("get/track/per/ID", async (int TrackID, F1_ManagerDbContext db) =>
     return Results.Ok(items);
 });
 
+#endregion
 //user checks and register
 //check
+#region user checks and register
+
 app.MapGet("/user/check", async (string username, string password, F1_ManagerDbContext db) =>
 {
     var user = await db.Users
@@ -107,8 +112,11 @@ app.MapPost("/user/register", async (string username, string password, F1_Manage
     return Results.Created($"/user_register", User);
 });
 
+#endregion
 //filter on user ID
 //get all teams from user
+#region get stuf based on user
+
 app.MapGet("get/Teams/from/user", async (int IDUser, F1_ManagerDbContext db) =>
 {
     List<string> naamTeams = await db.Teams
@@ -142,5 +150,7 @@ app.MapGet("get/ID/from/username", async (string username, F1_ManagerDbContext d
         return Results.NotFound("User not found");
     return Results.Ok(user.Iduser);
 });
+
+#endregion
 
 app.Run();
