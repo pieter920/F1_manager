@@ -119,5 +119,28 @@ app.MapGet("get/Teams/from/user", async (int IDUser, F1_ManagerDbContext db) =>
 
     return naamTeams;
 });
+//get if FKTeam is empty for user
+app.MapGet("get/empty/team/from/user", async (int IDUser, F1_ManagerDbContext db) =>
+{
+    var user = await db.Users
+        .Where(u => u.Iduser == IDUser)
+        .FirstOrDefaultAsync();
+
+    if (user == null)
+        return Results.NotFound("User not found");
+
+    bool hasNoTeam = user.Fkteam == null;
+    return Results.Ok(hasNoTeam);
+});
+//get ID from Username
+app.MapGet("get/ID/from/username", async (string username, F1_ManagerDbContext db) =>
+{
+    var user = await db.Users
+        .Where(u => u.NameUser == username)
+        .FirstOrDefaultAsync();
+    if (user == null)
+        return Results.NotFound("User not found");
+    return Results.Ok(user.Iduser);
+});
 
 app.Run();
