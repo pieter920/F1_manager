@@ -16,4 +16,6 @@ public partial class Team
     public virtual ICollection<Teamhasdriver> Teamhasdrivers { get; set; } = new List<Teamhasdriver>();
 
     public virtual ICollection<Teamhasseizoen> Teamhasseizoens { get; set; } = new List<Teamhasseizoen>();
+
+    public virtual ICollection<User> Users { get; set; } = new List<User>();
 }

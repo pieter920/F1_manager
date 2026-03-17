@@ -29,10 +29,13 @@ app.MapGet("get/Drivers", async (F1_ManagerDbContext db) =>
     var items = await db.Drivers.ToListAsync();
     return Results.Ok(items);
 });
-//get all teams
-app.MapGet("get/Teams", async (F1_ManagerDbContext db) =>
+//get first 10 teams
+app.MapGet("get/10/Teams", async (F1_ManagerDbContext db) =>
 {
-    var items = await db.Teams.ToListAsync();
+    var items = await db.Teams
+    .Where(pbl => pbl.Idteam <= 10)
+    .Select(t => t.NaamTeam)
+    .ToListAsync();
     return Results.Ok(items);
 });
 //get all seasons
@@ -84,7 +87,7 @@ app.MapGet("/user/check", async (string username, string password, F1_ManagerDbC
 
     return Results.Ok(new
     {
-        UserId = user.IdUser,
+        UserId = user.Iduser,
         Username = user.NameUser
     });
 });
@@ -105,6 +108,16 @@ app.MapPost("/user/register", async (string username, string password, F1_Manage
 });
 
 //filter on user ID
+//get all teams from user
+app.MapGet("get/Teams/from/user", async (int IDUser, F1_ManagerDbContext db) =>
+{
+    List<string> naamTeams = await db.Teams
+    .Where(t => db.Users
+        .Any(u => u.Iduser == IDUser && u.Fkteam == t.Idteam))
+    .Select(t => t.NaamTeam)
+    .ToListAsync();
 
+    return naamTeams;
+});
 
 app.Run();

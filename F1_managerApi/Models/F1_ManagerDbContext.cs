@@ -86,9 +86,12 @@ public partial class F1_ManagerDbContext : DbContext
 
             entity.HasIndex(e => e.Fktrack, "FKTrack");
 
+            entity.HasIndex(e => e.Fkuser, "FKUser");
+
             entity.Property(e => e.IdraceWeekend).HasColumnName("IDRaceWeekend");
             entity.Property(e => e.Fkseizoen).HasColumnName("FKSeizoen");
             entity.Property(e => e.Fktrack).HasColumnName("FKTrack");
+            entity.Property(e => e.Fkuser).HasColumnName("FKUser");
 
             entity.HasOne(d => d.FkseizoenNavigation).WithMany(p => p.Raceweekends)
                 .HasForeignKey(d => d.Fkseizoen)
@@ -99,6 +102,10 @@ public partial class F1_ManagerDbContext : DbContext
                 .HasForeignKey(d => d.Fktrack)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("raceweekend_ibfk_2");
+
+            entity.HasOne(d => d.FkuserNavigation).WithMany(p => p.Raceweekends)
+                .HasForeignKey(d => d.Fkuser)
+                .HasConstraintName("raceweekend_ibfk_3");
         });
 
         modelBuilder.Entity<Raceweekendhasdriver>(entity =>
@@ -212,19 +219,26 @@ public partial class F1_ManagerDbContext : DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.IdUser).HasName("PRIMARY");
+            entity.HasKey(e => e.Iduser).HasName("PRIMARY");
 
             entity.ToTable("user");
 
+            entity.HasIndex(e => e.Fkteam, "FKTeam");
+
             entity.HasIndex(e => e.NameUser, "nameUser").IsUnique();
 
-            entity.Property(e => e.IdUser).HasColumnName("idUser");
+            entity.Property(e => e.Iduser).HasColumnName("IDUser");
+            entity.Property(e => e.Fkteam).HasColumnName("FKTeam");
             entity.Property(e => e.NameUser)
                 .HasMaxLength(60)
                 .HasColumnName("nameUser");
             entity.Property(e => e.PassWordUser)
                 .HasMaxLength(60)
                 .HasColumnName("passWordUser");
+
+            entity.HasOne(d => d.FkteamNavigation).WithMany(p => p.Users)
+                .HasForeignKey(d => d.Fkteam)
+                .HasConstraintName("user_ibfk_1");
         });
 
         OnModelCreatingPartial(modelBuilder);
