@@ -4,6 +4,7 @@
 @rendermode InteractiveServer
 @inject NavigationManager Navigation
 @inject IJSRuntime JS
+@inject UserStateService UserState
 
 <h3>Login</h3>
 
@@ -40,7 +41,8 @@
             var url3 = $"get/empty/team/from/user?IDUser={_userId}";
             var response3 = await Http.GetAsync(url3);
             var hasNoTeam = await response3.Content.ReadFromJsonAsync<bool>();
-
+            UserState.UserId = _userId;
+            UserState.Username = _username;
             if (hasNoTeam)
             {
                 Navigation.NavigateTo("/CreateTeam");
