@@ -1,6 +1,66 @@
 ﻿@page "/CreateTeam"
-<h3>CreateTeam</h3>
+@inject HttpClient Http
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
+
+<h3>Login</h3>
+
+<div class="mb-3 mt-3">
+    <label for="username">Gebruikersnaam:</label>
+    <input type="text" class="form-control" id="username" placeholder="gebruikersnaam" @bind="_username" />
+</div>
+
+<div class="mb-3">
+    <label for="password">Wachtwoord:</label>
+    <input type="password" class="form-control" id="password" placeholder="wachtwoord" @bind="_password" />
+</div>
+
+<button class="btn btn-primary" @onclick="() => LoginUser()">Log in</button>
+<button class="btn btn-primary" @onclick="() => RegistreerUser()">Registreer</button>
 
 @code {
+    private string _username = "";
+    private string _password = "";
+    private int _userId = 0;
 
+    public async Task LoginUser()
+    {
+        Console.WriteLine( "Login pressed" );
+        var url = $"/user/check?username={Uri.EscapeDataString(_username)}&password={Uri.EscapeDataString(_password)}";
+        var response = await Http.GetAsync(url);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var url2 = $"get/ID/from/username?username={Uri.EscapeDataString(_username)}";
+            var response2 = await Http.GetAsync(url2);
+            _userId = await response2.Content.ReadFromJsonAsync<int>();
+
+            var url3 = $"get/empty/team/from/user?IDUser={_userId}";
+            var response3 = await Http.GetAsync(url3);
+            var hasNoTeam = await response3.Content.ReadFromJsonAsync<bool>();
+
+            if (hasNoTeam)
+            {
+                Navigation.NavigateTo("/CreateTeam");
+            }
+            else
+            {
+                Navigation.NavigateTo("/Home");
+            }
+        }
+        else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            await JS.InvokeVoidAsync("alert", "Ongeldige gebruikersnaam of wachtwoord.");
+        }
+        else
+        {
+            await JS.InvokeVoidAsync("alert", "Er is een fout opgetreden. Probeer het later opnieuw.");
+        }	
+    }
+    public async Task RegistreerUser()
+    {
+        Navigation.NavigateTo("/register");
+        
+    }
 }
