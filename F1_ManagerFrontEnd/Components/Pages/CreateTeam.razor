@@ -28,6 +28,7 @@
         var url = $"/Create/Team?NaamTeam={Uri.EscapeDataString(_NaamTeam)}&NationaliteitTeam={Uri.EscapeDataString(_Natie)}&UserID={UserState.UserId}";
         var response = await Http.PostAsync(url, null);
 
+        //NEED TO CHECK IF TEAM NAME IS ALREADY IN USE
         Navigation.NavigateTo("/Home");
     }
 }
