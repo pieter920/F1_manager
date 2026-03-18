@@ -1,5 +1,6 @@
 using F1_ManagerFrontEnd.Components;
 using F1_ManagerFrontEnd.Components.Layout;
+using F1_ManagerFrontEnd.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped(sp=>new HttpClient 
@@ -9,7 +10,7 @@ builder.Services.AddScoped(sp=>new HttpClient
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
-
+builder.Services.AddSingleton<UserStateService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
