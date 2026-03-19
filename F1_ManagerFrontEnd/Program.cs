@@ -2,6 +2,7 @@ using F1_ManagerFrontEnd.Components;
 using F1_ManagerFrontEnd.Components.Layout;
 using F1_ManagerFrontEnd.Services;
 
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped(sp=>new HttpClient 
 { 
