@@ -23,9 +23,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 //basic get request
-//get all drivers
 #region simple get request
-
+//get all drivers
 app.MapGet("get/Drivers", async (F1_ManagerDbContext db) =>
 {
     var items = await db.Drivers.ToListAsync();
@@ -79,9 +78,8 @@ app.MapGet("get/track/per/ID", async (int TrackID, F1_ManagerDbContext db) =>
 
 #endregion
 //user checks and register
-//check
 #region user checks and register
-
+//check
 app.MapGet("/user/check", async (string username, string password, F1_ManagerDbContext db) =>
 {
     var user = await db.Users
@@ -114,9 +112,8 @@ app.MapPost("/user/register", async (string username, string password, F1_Manage
 
 #endregion
 //filter on user ID
-//get all teams from user
 #region get stuf based on user
-
+//get all teams from user
 app.MapGet("get/Teams/from/user", async (int IDUser, F1_ManagerDbContext db) =>
 {
     List<string> naamTeams = await db.Teams
@@ -173,6 +170,7 @@ app.MapPost("/Create/Team", async (string NaamTeam, string NationaliteitTeam,int
 });
 
 #endregion
+//Raceweekends API
 #region RaceWeekens
 //get raceweekends for user
 app.MapGet("get/raceweekends/from/user", async (int IDUser, F1_ManagerDbContext db) =>
