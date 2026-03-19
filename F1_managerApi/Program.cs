@@ -133,7 +133,6 @@ app.MapGet("get/empty/team/from/user", async (int IDUser, F1_ManagerDbContext db
     var user = await db.Users
         .Where(u => u.Iduser == IDUser)
         .FirstOrDefaultAsync();
-
     if (user == null)
         return Results.NotFound("User not found");
 
@@ -171,6 +170,52 @@ app.MapPost("/Create/Team", async (string NaamTeam, string NationaliteitTeam,int
     await db.SaveChangesAsync();
 
     return Results.Created($"/Create/Team", Team);
+});
+
+#endregion
+#region RaceWeekens
+//get raceweekends for user
+app.MapGet("get/raceweekends/from/user", async (int IDUser, F1_ManagerDbContext db) =>
+{
+    List<int> naamRaceweekends = await db.Raceweekends
+    .Where(rw => db.Users
+        .Any(u => u.Iduser == IDUser && rw.Fkuser == u.Iduser))
+    .Select(rw => rw.IdraceWeekend)
+    .ToListAsync();
+    return naamRaceweekends;
+});
+//get raceweekens by ID
+app.MapGet("get/raceweekends/by/ID", async (int IdraceWeekend, F1_ManagerDbContext db) =>
+{
+    var result = await db.Raceweekends
+        .Where(rw => rw.IdraceWeekend == IdraceWeekend)
+        .Join(db.Tracks,
+            rw => rw.Fktrack,
+            t => t.Idtrack,
+            (rw, t) => new
+            {
+                NaamTrack = t.NaamTrack,
+                LapsTrack = t.LapsTrack,
+                NationTrack = t.LandTrack
+            })
+        .FirstOrDefaultAsync();
+
+    if (result == null)
+        return Results.NotFound("Raceweekend not found");
+
+    return Results.Ok(result);
+});
+//get raceweekens by user ID and season ID
+app.MapGet("get/raceweekends/by/User/ID/and/season", async (int IDUser,int IDSeason, F1_ManagerDbContext db) =>
+{
+    var result = await db.Raceweekends
+        .Where(rw => rw.Fkseizoen == IDSeason && rw.Fkuser == IDUser)
+        .ToListAsync();
+
+    if (result == null)
+        return Results.NotFound("No raceweekends found");
+
+    return Results.Ok(result);
 });
 
 #endregion

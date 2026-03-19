@@ -1,0 +1,32 @@
+﻿@rendermode InteractiveServer
+@inject UserStateService UserState
+@inject NavigationManager Navigation
+
+<div class="dropdown" @onclick:stopPropagation>
+    <a @onclick="ToggleDropdown" style="cursor:pointer;">
+        @UserState.Username ▼
+    </a>
+    @if (_showDropdown)
+    {
+        <div style="display:block; position:absolute; right:0; background:white; border:1px solid #ccc; padding:5px; z-index:1000;">
+            <a @onclick="Logout" style="cursor:pointer; display:block; padding:5px 10px;">Log out</a>
+        </div>
+    }
+</div>
+
+@code {
+    private bool _showDropdown = false;
+
+    private void ToggleDropdown()
+    {
+        _showDropdown = !_showDropdown;
+    }
+
+    private void Logout()
+    {
+        _showDropdown = false;
+        UserState.UserId = 0;
+        UserState.Username = "";
+        Navigation.NavigateTo("/");
+    }
+}

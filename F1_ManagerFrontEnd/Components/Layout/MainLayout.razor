@@ -1,21 +1,26 @@
 ﻿@inherits LayoutComponentBase
 @inject NavigationManager NavManager
+@inject UserStateService UserState
+@inject NavigationManager Navigation
 
 <div class="page">
-    <div class="page">
-        @if (!NavManager.Uri.Contains("/login") && !NavManager.Uri.EndsWith("/") 
+    @if (!NavManager.Uri.Contains("/login") && !NavManager.Uri.EndsWith("/")
         && !NavManager.Uri.EndsWith("/register") && !NavManager.Uri.EndsWith("/CreateTeam"))
-        {
-            <div class="sidebar">
-                <NavMenu />
-            </div>
-        }
-    </div>
+    {
+        <div class="sidebar">
+            <NavMenu />
+        </div>
+    }
 
     <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-        </div>
+    <div class="top-row px-4">
+            @if (!NavManager.Uri.Contains("/login") && !NavManager.Uri.EndsWith("/")
+                                && !NavManager.Uri.EndsWith("/register"))
+            {
+                <F1_ManagerFrontEnd.Components.UserDropdown />
+            }
+
+    </div>
 
         <article class="content px-4">
             @Body
