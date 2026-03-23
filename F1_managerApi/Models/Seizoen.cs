@@ -13,6 +13,10 @@ public partial class Seizoen
 
     public DateOnly EindDatum { get; set; }
 
+    public int Fkuser { get; set; }
+
+    public virtual User FkuserNavigation { get; set; } = null!;
+
     public virtual ICollection<Raceweekend> Raceweekends { get; set; } = new List<Raceweekend>();
 
     public virtual ICollection<Teamhasseizoen> Teamhasseizoens { get; set; } = new List<Teamhasseizoen>();

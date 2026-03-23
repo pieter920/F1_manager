@@ -223,5 +223,24 @@ app.MapGet("get/raceweekends/by/User/ID/and/season", async (int IDUser,string Se
 });
 
 #endregion
+#region create calendar
+//create start calendar for user
+app.MapPost("/create/Eerste/calendar", async (int IDUser, int seasonID, F1_ManagerDbContext db) =>
+{
 
+});
+app.MapPost("/create/Eerste/seizon", async (int IDUser, F1_ManagerDbContext db) =>
+{
+    var seizon = new Seizoen
+    {
+        NaamSeizoen = "Seizoen 2025",
+        BeginDatum = new DateOnly(2024, 12, 13),
+        EindDatum = new DateOnly(2025, 12, 12),
+        Fkuser = IDUser
+    };
+
+    db.Seizoens.Add(seizon);
+    await db.SaveChangesAsync();
+});
+#endregion
 app.Run();
