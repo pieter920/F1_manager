@@ -105,6 +105,7 @@ public partial class F1_ManagerDbContext : DbContext
 
             entity.HasOne(d => d.FkuserNavigation).WithMany(p => p.Raceweekends)
                 .HasForeignKey(d => d.Fkuser)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("raceweekend_ibfk_3");
         });
 
@@ -141,8 +142,16 @@ public partial class F1_ManagerDbContext : DbContext
 
             entity.ToTable("seizoen");
 
+            entity.HasIndex(e => e.Fkuser, "FKUser");
+
             entity.Property(e => e.Idseizoen).HasColumnName("IDSeizoen");
+            entity.Property(e => e.Fkuser).HasColumnName("FKUser");
             entity.Property(e => e.NaamSeizoen).HasMaxLength(64);
+
+            entity.HasOne(d => d.FkuserNavigation).WithMany(p => p.Seizoens)
+                .HasForeignKey(d => d.Fkuser)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("seizoen_ibfk_1");
         });
 
         modelBuilder.Entity<Team>(entity =>

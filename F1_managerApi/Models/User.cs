@@ -16,4 +16,6 @@ public partial class User
     public virtual Team? FkteamNavigation { get; set; }
 
     public virtual ICollection<Raceweekend> Raceweekends { get; set; } = new List<Raceweekend>();
+
+    public virtual ICollection<Seizoen> Seizoens { get; set; } = new List<Seizoen>();
 }

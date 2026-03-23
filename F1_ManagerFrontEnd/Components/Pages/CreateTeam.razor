@@ -27,11 +27,13 @@
     {
         var url = $"/Create/Team?NaamTeam={Uri.EscapeDataString(_NaamTeam)}&NationaliteitTeam={Uri.EscapeDataString(_Natie)}&UserID={UserState.UserId}";
         var response = await Http.PostAsync(url, null);
-        CreateCalender();
+        await CreateCalender();
         Navigation.NavigateTo("/Home");
     }
     public async Task CreateCalender()
     {
-        
+        var urlSeizon = $"create/Eerste/seizon?IDUser={UserState.UserId}";
+        var responseSeizon = await Http.PostAsync(urlSeizon, null);
+        //nog niet af moet nog raceweekends in stellen
     }
 }
