@@ -225,11 +225,11 @@ app.MapGet("get/raceweekends/by/User/ID/and/season", async (int IDUser,string Se
 #endregion
 #region create calendar
 //create start calendar for user
-app.MapPost("/create/Eerste/calendar", async (int IDUser, int seasonID, F1_ManagerDbContext db) =>
+app.MapPost("create/Eerste/calendar", async (int IDUser, int seasonID, F1_ManagerDbContext db) =>
 {
-
+    
 });
-app.MapPost("/create/Eerste/seizon", async (int IDUser, F1_ManagerDbContext db) =>
+app.MapPost("create/Eerste/seizon", async (int IDUser, F1_ManagerDbContext db) =>
 {
     var seizon = new Seizoen
     {
@@ -241,6 +241,17 @@ app.MapPost("/create/Eerste/seizon", async (int IDUser, F1_ManagerDbContext db) 
 
     db.Seizoens.Add(seizon);
     await db.SaveChangesAsync();
+    return Results.Ok();
+});
+//get ID from seizon
+app.MapGet("get/ID/from/SeizoenName", async (string NaamSeizoen, F1_ManagerDbContext db) =>
+{
+    var Seizoen = await db.Seizoens
+        .Where(u => u.NaamSeizoen == NaamSeizoen)
+        .FirstOrDefaultAsync();
+    if (Seizoen == null)
+        return Results.NotFound("User not found");
+    return Results.Ok(Seizoen.Idseizoen);
 });
 #endregion
 app.Run();
