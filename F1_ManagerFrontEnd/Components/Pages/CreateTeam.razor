@@ -38,5 +38,6 @@
         var IDSeizon = await Http.GetAsync(urlID);
         var urlSeizonCreate = $"create/Eerste/calendar?IDUser={UserState.UserId}&seasonID={IDSeizon}";
         var responseSeizonCreate = await Http.PostAsync(urlSeizonCreate, null);
+        //endpoints maken voor het aanmaken van een kalender en deze koppelen aan de user
     }
 }
