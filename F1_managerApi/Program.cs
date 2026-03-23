@@ -1,5 +1,6 @@
 using F1_managerApi.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = "Server=localhost;Database=f1_manager;User=root;Password=1234;";
@@ -203,11 +204,16 @@ app.MapGet("get/raceweekends/by/ID", async (int IdraceWeekend, F1_ManagerDbConte
 
     return Results.Ok(result);
 });
-//get raceweekens by user ID and season ID
-app.MapGet("get/raceweekends/by/User/ID/and/season", async (int IDUser,int IDSeason, F1_ManagerDbContext db) =>
+//get raceweekens by user ID and season Name
+app.MapGet("get/raceweekends/by/User/ID/and/season", async (int IDUser,string SeasonName, F1_ManagerDbContext db) =>
 {
     var result = await db.Raceweekends
-        .Where(rw => rw.Fkseizoen == IDSeason && rw.Fkuser == IDUser)
+        .Join(db.Seizoens,
+              rw => rw.Fkseizoen,
+              s => s.Idseizoen,
+              (rw, s) => new { rw, s })
+        .Where(x => x.rw.Fkuser == IDUser && x.s.NaamSeizoen == SeasonName)
+        .Select(x => x.rw)
         .ToListAsync();
 
     if (result == null)
