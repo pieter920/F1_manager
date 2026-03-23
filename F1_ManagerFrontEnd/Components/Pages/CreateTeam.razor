@@ -36,6 +36,7 @@
         var responseSeizon = await Http.PostAsync(urlSeizon, null);
         var urlID = $"get/ID/from/SeizoenName?NaamSeizoen={Uri.EscapeDataString("Seizoen 2025")}";
         var IDSeizon = await Http.GetAsync(urlID);
-        //nog niet af moet nog raceweekends in stellen
+        var urlSeizonCreate = $"create/Eerste/calendar?IDUser={UserState.UserId}&seasonID={IDSeizon}";
+        var responseSeizonCreate = await Http.PostAsync(urlSeizonCreate, null);
     }
 }
