@@ -313,6 +313,5 @@ app.MapGet("get/Team/from/userID", async (int IDUser, F1_ManagerDbContext db) =>
         return Results.NotFound("Team not found for the user");
     return Results.Ok(team);
 });
-
 #endregion
 app.Run();

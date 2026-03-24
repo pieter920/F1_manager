@@ -5,7 +5,8 @@
 
 <div class="page">
     @if (!NavManager.Uri.Contains("/login") && !NavManager.Uri.EndsWith("/")
-        && !NavManager.Uri.EndsWith("/register") && !NavManager.Uri.EndsWith("/CreateTeam"))
+                && !NavManager.Uri.EndsWith("/register") && !NavManager.Uri.EndsWith("/CreateTeam") 
+                && !NavManager.Uri.EndsWith("/CreateDrivers"))
     {
         <div class="sidebar">
             <NavMenu />
@@ -15,7 +16,8 @@
     <main>
     <div class="top-row px-4">
             @if (!NavManager.Uri.Contains("/login") && !NavManager.Uri.EndsWith("/")
-                                && !NavManager.Uri.EndsWith("/register"))
+                            && !NavManager.Uri.EndsWith("/register") && !NavManager.Uri.EndsWith("/CreateTeam") 
+                            && !NavManager.Uri.EndsWith("/CreateDrivers"))
             {
                 <F1_ManagerFrontEnd.Components.UserDropdown />
             }
