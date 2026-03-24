@@ -28,7 +28,6 @@
 
     public async Task LoginUser()
     {
-        Console.WriteLine( "Login pressed" );
         var url = $"/user/check?username={Uri.EscapeDataString(_username)}&password={Uri.EscapeDataString(_password)}";
         var response = await Http.GetAsync(url);
 

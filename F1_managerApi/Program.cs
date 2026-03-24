@@ -227,7 +227,36 @@ app.MapGet("get/raceweekends/by/User/ID/and/season", async (int IDUser,string Se
 //create start calendar for user
 app.MapPost("create/Eerste/calendar", async (int IDUser, int seasonID, F1_ManagerDbContext db) =>
 {
-    
+    var raceweekends = new List<Raceweekend>
+    {
+        new Raceweekend { BeginDatum = new DateOnly(2025, 3, 14),  EindDatum = new DateOnly(2025, 3, 16), Fkseizoen = seasonID, Fktrack = 1,  Fkuser = IDUser },
+        new Raceweekend { BeginDatum = new DateOnly(2025, 3, 21),  EindDatum = new DateOnly(2025, 3, 23), Fkseizoen = seasonID, Fktrack = 2,  Fkuser = IDUser },
+        new Raceweekend { BeginDatum = new DateOnly(2025, 4, 4),   EindDatum = new DateOnly(2025, 4, 6), Fkseizoen = seasonID, Fktrack = 3,  Fkuser = IDUser },
+        new Raceweekend { BeginDatum = new DateOnly(2025, 4, 11),  EindDatum = new DateOnly(2025, 4, 13), Fkseizoen = seasonID, Fktrack = 4,  Fkuser = IDUser },
+        new Raceweekend { BeginDatum = new DateOnly(2025, 4, 18),  EindDatum = new DateOnly(2025, 4, 20), Fkseizoen = seasonID, Fktrack = 5,  Fkuser = IDUser },
+        new Raceweekend { BeginDatum = new DateOnly(2025, 5, 2),   EindDatum = new DateOnly(2025, 5, 4), Fkseizoen = seasonID, Fktrack = 6,  Fkuser = IDUser },
+        new Raceweekend { BeginDatum = new DateOnly(2025, 5, 16),  EindDatum = new DateOnly(2025, 5, 18), Fkseizoen = seasonID, Fktrack = 7,  Fkuser = IDUser },
+        new Raceweekend { BeginDatum = new DateOnly(2025, 5, 23),  EindDatum = new DateOnly(2025, 5, 25), Fkseizoen = seasonID, Fktrack = 8,  Fkuser = IDUser },
+        new Raceweekend { BeginDatum = new DateOnly(2025, 5, 30),  EindDatum = new DateOnly(2025, 6, 1), Fkseizoen = seasonID, Fktrack = 9,  Fkuser = IDUser },
+        new Raceweekend { BeginDatum = new DateOnly(2025, 6, 13),  EindDatum = new DateOnly(2025, 6, 15), Fkseizoen = seasonID, Fktrack = 10, Fkuser = IDUser },
+        new Raceweekend { BeginDatum = new DateOnly(2025, 6, 27),  EindDatum = new DateOnly(2025, 6, 29), Fkseizoen = seasonID, Fktrack = 11, Fkuser = IDUser },
+        new Raceweekend { BeginDatum = new DateOnly(2025, 7, 4),   EindDatum = new DateOnly(2025, 7, 6), Fkseizoen = seasonID, Fktrack = 12, Fkuser = IDUser },
+        new Raceweekend { BeginDatum = new DateOnly(2025, 7, 25),  EindDatum = new DateOnly(2025, 7, 27), Fkseizoen = seasonID, Fktrack = 13, Fkuser = IDUser },
+        new Raceweekend { BeginDatum = new DateOnly(2025, 8, 1),   EindDatum = new DateOnly(2025, 8, 3), Fkseizoen = seasonID, Fktrack = 14, Fkuser = IDUser },
+        new Raceweekend { BeginDatum = new DateOnly(2025, 8, 29),  EindDatum = new DateOnly(2025, 8, 31), Fkseizoen = seasonID, Fktrack = 15, Fkuser = IDUser },
+        new Raceweekend { BeginDatum = new DateOnly(2025, 9, 5),   EindDatum = new DateOnly(2025, 9, 7), Fkseizoen = seasonID, Fktrack = 16, Fkuser = IDUser },
+        new Raceweekend { BeginDatum = new DateOnly(2025, 9, 19),  EindDatum = new DateOnly(2025, 9, 21), Fkseizoen = seasonID, Fktrack = 17, Fkuser = IDUser },
+        new Raceweekend { BeginDatum = new DateOnly(2025, 10, 3),  EindDatum = new DateOnly(2025, 10, 5), Fkseizoen = seasonID, Fktrack = 18, Fkuser = IDUser },
+        new Raceweekend { BeginDatum = new DateOnly(2025, 10, 17), EindDatum = new DateOnly(2025, 10, 19), Fkseizoen = seasonID, Fktrack = 19, Fkuser = IDUser },
+        new Raceweekend { BeginDatum = new DateOnly(2025, 10, 24), EindDatum = new DateOnly(2025, 10, 26), Fkseizoen = seasonID, Fktrack = 20, Fkuser = IDUser },
+        new Raceweekend { BeginDatum = new DateOnly(2025, 11, 7),  EindDatum = new DateOnly(2025, 11, 9), Fkseizoen = seasonID, Fktrack = 21, Fkuser = IDUser },
+        new Raceweekend { BeginDatum = new DateOnly(2025, 11, 20), EindDatum = new DateOnly(2025, 11, 22), Fkseizoen = seasonID, Fktrack = 22, Fkuser = IDUser },
+        new Raceweekend { BeginDatum = new DateOnly(2025, 11, 28), EindDatum = new DateOnly(2025, 11, 30), Fkseizoen = seasonID, Fktrack = 23, Fkuser = IDUser },
+        new Raceweekend { BeginDatum = new DateOnly(2025, 12, 5),  EindDatum = new DateOnly(2025, 12, 7), Fkseizoen = seasonID, Fktrack = 24, Fkuser = IDUser },
+    };
+    await db.Raceweekends.AddRangeAsync(raceweekends);
+    await db.SaveChangesAsync();
+    return Results.Ok();
 });
 app.MapPost("create/Eerste/seizon", async (int IDUser, F1_ManagerDbContext db) =>
 {
