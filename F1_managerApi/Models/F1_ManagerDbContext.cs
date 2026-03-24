@@ -28,8 +28,6 @@ public partial class F1_ManagerDbContext : DbContext
 
     public virtual DbSet<Team> Teams { get; set; }
 
-    public virtual DbSet<Teamhasdriver> Teamhasdrivers { get; set; }
-
     public virtual DbSet<Teamhasseizoen> Teamhasseizoens { get; set; }
 
     public virtual DbSet<Track> Tracks { get; set; }
@@ -70,10 +68,18 @@ public partial class F1_ManagerDbContext : DbContext
 
             entity.ToTable("driver");
 
+            entity.HasIndex(e => e.Fkteam, "FKTeam");
+
             entity.Property(e => e.Iddriver).HasColumnName("IDDriver");
             entity.Property(e => e.AchternaamDriver).HasMaxLength(64);
+            entity.Property(e => e.Fkteam).HasColumnName("FKTeam");
             entity.Property(e => e.NationaliteitDriver).HasMaxLength(64);
             entity.Property(e => e.VoornaamDriver).HasMaxLength(64);
+
+            entity.HasOne(d => d.FkteamNavigation).WithMany(p => p.Drivers)
+                .HasForeignKey(d => d.Fkteam)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("driver_ibfk_1");
         });
 
         modelBuilder.Entity<Raceweekend>(entity =>
@@ -163,31 +169,6 @@ public partial class F1_ManagerDbContext : DbContext
             entity.Property(e => e.Idteam).HasColumnName("IDTeam");
             entity.Property(e => e.NaamTeam).HasMaxLength(128);
             entity.Property(e => e.NationaliteitTeam).HasMaxLength(64);
-        });
-
-        modelBuilder.Entity<Teamhasdriver>(entity =>
-        {
-            entity.HasKey(e => e.IdteamHasDriver).HasName("PRIMARY");
-
-            entity.ToTable("teamhasdriver");
-
-            entity.HasIndex(e => e.Fkdriver, "FKDriver");
-
-            entity.HasIndex(e => e.Fkteam, "FKTeam");
-
-            entity.Property(e => e.IdteamHasDriver).HasColumnName("IDTeamHasDriver");
-            entity.Property(e => e.Fkdriver).HasColumnName("FKDriver");
-            entity.Property(e => e.Fkteam).HasColumnName("FKTeam");
-
-            entity.HasOne(d => d.FkdriverNavigation).WithMany(p => p.Teamhasdrivers)
-                .HasForeignKey(d => d.Fkdriver)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("teamhasdriver_ibfk_2");
-
-            entity.HasOne(d => d.FkteamNavigation).WithMany(p => p.Teamhasdrivers)
-                .HasForeignKey(d => d.Fkteam)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("teamhasdriver_ibfk_1");
         });
 
         modelBuilder.Entity<Teamhasseizoen>(entity =>

@@ -19,7 +19,9 @@ public partial class Driver
 
     public int LeeftijdDriver { get; set; }
 
-    public virtual ICollection<Raceweekendhasdriver> Raceweekendhasdrivers { get; set; } = new List<Raceweekendhasdriver>();
+    public int Fkteam { get; set; }
 
-    public virtual ICollection<Teamhasdriver> Teamhasdrivers { get; set; } = new List<Teamhasdriver>();
+    public virtual Team FkteamNavigation { get; set; } = null!;
+
+    public virtual ICollection<Raceweekendhasdriver> Raceweekendhasdrivers { get; set; } = new List<Raceweekendhasdriver>();
 }

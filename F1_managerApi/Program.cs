@@ -283,4 +283,36 @@ app.MapGet("get/ID/from/SeizoenName", async (string NaamSeizoen, F1_ManagerDbCon
     return Results.Ok(Seizoen.Idseizoen);
 });
 #endregion
+#region create driver
+//Create driver for user
+app.MapPost("Create/Driver", async (string VoorNaamDriver, string AchterNaamDriver, string NationaliteitDriver,int Leeftijd ,int TeamID,int ratingDriver, F1_ManagerDbContext db) =>
+{
+    var exists = await db.Drivers
+    .Where(ID => ID.Iddriver <= 20)
+    .AnyAsync(pbl => pbl.VoornaamDriver == VoorNaamDriver);
+    if (exists)
+        return Results.Conflict("Driver already exists in real Life");
+    //zet in databank
+    var Driver = new Driver { 
+        VoornaamDriver = VoorNaamDriver,AchternaamDriver = AchterNaamDriver, 
+        NationaliteitDriver = NationaliteitDriver, LeeftijdDriver = Leeftijd, 
+        Rating = ratingDriver,Fkteam = TeamID,Confidence = 80
+    };
+    db.Drivers.Add(Driver);
+    await db.SaveChangesAsync();
+    return Results.Created($"/Create/Driver", Driver);
+});
+//get Team by user ID
+app.MapGet("get/Team/from/userID", async (int IDUser, F1_ManagerDbContext db) =>
+{
+    var team = await db.Teams
+        .Where(t => db.Users
+            .Any(u => u.Iduser == IDUser && u.Fkteam == t.Idteam))
+        .FirstOrDefaultAsync();
+    if (team == null)
+        return Results.NotFound("Team not found for the user");
+    return Results.Ok(team);
+});
+
+#endregion
 app.Run();

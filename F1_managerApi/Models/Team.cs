@@ -13,7 +13,7 @@ public partial class Team
 
     public virtual ICollection<Auto> Autos { get; set; } = new List<Auto>();
 
-    public virtual ICollection<Teamhasdriver> Teamhasdrivers { get; set; } = new List<Teamhasdriver>();
+    public virtual ICollection<Driver> Drivers { get; set; } = new List<Driver>();
 
     public virtual ICollection<Teamhasseizoen> Teamhasseizoens { get; set; } = new List<Teamhasseizoen>();
 
