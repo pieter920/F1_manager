@@ -39,7 +39,7 @@
     public async Task CreateDriver()
     {
         //teamID opvragen van het team van de user // nog in nakijken
-        var urlTeamID = $"get/ID/from/Team?IDUser={UserState.UserId}";
+        var urlTeamID = $"get/Team/from/userID?IDUser={UserState.UserId}";
         var responseTeamID = await Http.GetAsync(urlTeamID);
         var _IDTeam = await responseTeamID.Content.ReadFromJsonAsync<int>();
         //generate random rating tussen 75 en 80

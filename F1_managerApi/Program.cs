@@ -311,7 +311,7 @@ app.MapGet("get/Team/from/userID", async (int IDUser, F1_ManagerDbContext db) =>
         .FirstOrDefaultAsync();
     if (team == null)
         return Results.NotFound("Team not found for the user");
-    return Results.Ok(team);
+    return Results.Ok(team.Idteam);
 });
 #endregion
 app.Run();
