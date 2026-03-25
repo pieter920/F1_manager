@@ -1,0 +1,52 @@
+﻿@page "/CreateDriver"
+@rendermode InteractiveServer
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
+@inject UserStateService UserState
+
+<h3>Create first Driver</h3>
+
+<div class="mb-3 mt-3">
+    <label for="Voornaam">Voornaam:</label>
+    <input type="text" class="form-control" id="Voornaam" placeholder="Voornaam" @bind="_VoorNaam" />
+</div>
+
+<div class="mb-3">
+    <label for="Achternaam">Achternaam:</label>
+    <input type="text" class="form-control" id="Achternaam" placeholder="Achternaam" @bind="_AchterNaam" />
+</div>
+
+<div class="mb-3">
+    <label for="Nationaliteit">Nationaliteit:</label>
+    <input type="text" class="form-control" id="Nationaliteit" placeholder="Nationaliteit" @bind="_natie" />
+</div>
+
+<div class="mb-3">
+    <label for="Leeftijd">Leeftijd:</label>
+    <input type="text" class="form-control" id="Leeftijd" placeholder="Leeftijd" @bind="_leeftijd" />
+</div>
+
+<button class="btn btn-primary" @onclick="() => CreateDriver1()">Create second driver</button>
+
+@code {
+    private string _VoorNaam = "";
+    private string _AchterNaam = "";
+    private string _natie = "";
+    private int _leeftijd = 0;
+    private int _rating = 0;
+    Random rng = new Random();
+    public async Task CreateDriver1()
+    {
+        //teamID opvragen van het team van de user
+        var urlTeamID = $"get/Team/from/userID?IDUser={UserState.UserId}";
+        var responseTeamID = await Http.GetAsync(urlTeamID);
+        var _IDTeam = await responseTeamID.Content.ReadFromJsonAsync<int>();
+        //generate random rating tussen 75 en 80
+        _rating = rng.Next(75, 81);
+        //driver aanmaken en deze koppelen aan het team van de user
+        var urlDriverCreate = $"Create/Driver?VoorNaamDriver={Uri.EscapeDataString(_VoorNaam)}&AchterNaamDriver={Uri.EscapeDataString(_AchterNaam)}&NationaliteitDriver={Uri.EscapeDataString(_natie)}&Leeftijd={_leeftijd}&ratingDriver={_rating}&TeamID={_IDTeam}";
+        var responseDriverCreate = await Http.PostAsync(urlDriverCreate, null);
+        Navigation.NavigateTo("/CreateDriver2");
+    }
+}

@@ -1,11 +1,11 @@
-﻿@page "/CreateDrivers"
+﻿@page "/CreateDriver2"
 @rendermode InteractiveServer
 @inject HttpClient Http
 @inject NavigationManager Navigation
 @inject IJSRuntime JS
 @inject UserStateService UserState
 
-<h3>Create Driver</h3>
+<h3>Create second Driver</h3>
 
 <div class="mb-3 mt-3">
     <label for="Voornaam">Voornaam:</label>
@@ -27,7 +27,7 @@
     <input type="text" class="form-control" id="Leeftijd" placeholder="Leeftijd" @bind="_leeftijd" />
 </div>
 
-<button class="btn btn-primary" @onclick="() => CreateDriver()">Create Team</button>
+<button class="btn btn-primary" @onclick="() => CreateDriver1()">Create second driver</button>
 
 @code {
     private string _VoorNaam = "";
@@ -36,9 +36,9 @@
     private int _leeftijd = 0;
     private int _rating = 0;
     Random rng = new Random();
-    public async Task CreateDriver()
+    public async Task CreateDriver1()
     {
-        //teamID opvragen van het team van de user // nog in nakijken
+        //teamID opvragen van het team van de user
         var urlTeamID = $"get/Team/from/userID?IDUser={UserState.UserId}";
         var responseTeamID = await Http.GetAsync(urlTeamID);
         var _IDTeam = await responseTeamID.Content.ReadFromJsonAsync<int>();
@@ -47,5 +47,6 @@
         //driver aanmaken en deze koppelen aan het team van de user
         var urlDriverCreate = $"Create/Driver?VoorNaamDriver={Uri.EscapeDataString(_VoorNaam)}&AchterNaamDriver={Uri.EscapeDataString(_AchterNaam)}&NationaliteitDriver={Uri.EscapeDataString(_natie)}&Leeftijd={_leeftijd}&ratingDriver={_rating}&TeamID={_IDTeam}";
         var responseDriverCreate = await Http.PostAsync(urlDriverCreate, null);
+        Navigation.NavigateTo("/home");
     }
 }
