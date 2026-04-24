@@ -8,5 +8,20 @@
 <PageTitle>Home</PageTitle>
 
 <h1>welcome to F1 Manager @UserState.Username</h1>
+<button class="btn btn-primary" @onclick="GoToTeams">ga naar Teams</button>
+<button class="btn btn-secondary" @onclick="GoToRaceweekend">ga naar volgend raceweekend</button>
+
+
+@code{
+    //moet nog gemaakt worden dat er een lijst van teams komt en dat je daar op kan klikken om naar de team pagina te gaan
+    private void GoToTeams()
+    {
+        Navigation.NavigateTo("/Teams");
+    }
+    private void GoToRaceweekend()
+    {
+        Navigation.NavigateTo("/ResultRaceweekend");
+    }
+}
 
 

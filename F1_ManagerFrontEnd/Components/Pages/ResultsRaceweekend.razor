@@ -1,0 +1,17 @@
+﻿@page "/ResultRaceweekend"
+@rendermode InteractiveServer
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
+@inject UserStateService UserState
+
+<h3>ResultsRaceweekend</h3>
+//kadertjes met de drivers en een keuze van auto dan via klik op knop simuleren race
+<button class="btn btn-primary" @onclick="SimulateRace">
+Simuleren </button>
+@code {
+    private void SimulateRace()
+    {
+        //hier moet nog een api call komen die de race simuleert en de resultaten teruggeeft
+    }
+}

@@ -314,4 +314,24 @@ app.MapGet("get/Team/from/userID", async (int IDUser, F1_ManagerDbContext db) =>
     return Results.Ok(team.Idteam);
 });
 #endregion
+#region simulate raceweekend
+//Simulate
+app.MapGet("simulate/raceweekend", async (int IDUser, F1_ManagerDbContext db) =>
+{
+    var raceweekend = await GetNextRaceweekend(IDUser, db);
+
+    if (raceweekend == null)
+        return Results.NotFound("No raceweekend found");
+
+    return Results.Ok(raceweekend);
+});
+//get first raceweekend with completed = 0 for user
+static async Task<Raceweekend?> GetNextRaceweekend(int IDUser, F1_ManagerDbContext db)
+{
+    return await db.Raceweekends
+        .Where(rw => rw.Fkuser == IDUser && rw.Completed == 0)
+        .FirstOrDefaultAsync();
+}
+
+#endregion
 app.Run();
