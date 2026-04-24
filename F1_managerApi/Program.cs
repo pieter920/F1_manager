@@ -115,6 +115,7 @@ app.MapPost("/user/register", async (string username, string password, F1_Manage
 //filter on user ID
 #region get stuf based on user
 //get all teams from user
+//aanpassen/weghalen
 app.MapGet("get/Teams/from/user", async (int IDUser, F1_ManagerDbContext db) =>
 {
     List<string> naamTeams = await db.Teams
@@ -305,10 +306,7 @@ app.MapPost("Create/Driver", async (string VoorNaamDriver, string AchterNaamDriv
 //get Team by user ID
 app.MapGet("get/Team/from/userID", async (int IDUser, F1_ManagerDbContext db) =>
 {
-    var team = await db.Teams
-        .Where(t => db.Users
-            .Any(u => u.Iduser == IDUser && u.Fkteam == t.Idteam))
-        .FirstOrDefaultAsync();
+    var team = await GetTeamFromUser(IDUser, db);
     if (team == null)
         return Results.NotFound("Team not found for the user");
     return Results.Ok(team.Idteam);
@@ -318,18 +316,27 @@ app.MapGet("get/Team/from/userID", async (int IDUser, F1_ManagerDbContext db) =>
 //Simulate
 app.MapGet("simulate/raceweekend", async (int IDUser, F1_ManagerDbContext db) =>
 {
-    var raceweekend = await GetNextRaceweekend(IDUser, db);
-
+    return await db.Raceweekends
+     .Where(rw => rw.Fkuser == IDUser && rw.Completed == 0)
+     .FirstOrDefaultAsync();
+    var teamUser = await GetTeamFromUser(IDUser, db);
     if (raceweekend == null)
         return Results.NotFound("No raceweekend found");
 
+
+    //moet nog veranderen
     return Results.Ok(raceweekend);
 });
-//get first raceweekend with completed = 0 for user
-static async Task<Raceweekend?> GetNextRaceweekend(int IDUser, F1_ManagerDbContext db)
+#endregion
+
+
+#region static functions
+//get team from user ID
+static async Task<Team?> GetTeamFromUser(int IDUser, F1_ManagerDbContext db)
 {
-    return await db.Raceweekends
-        .Where(rw => rw.Fkuser == IDUser && rw.Completed == 0)
+    return await db.Teams
+        .Where(t => db.Users
+            .Any(u => u.Iduser == IDUser && u.Fkteam == t.Idteam))
         .FirstOrDefaultAsync();
 }
 
