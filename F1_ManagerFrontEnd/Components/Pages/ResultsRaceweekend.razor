@@ -10,8 +10,18 @@
 <button class="btn btn-primary" @onclick="SimulateRace">
 Simuleren </button>
 @code {
-    private void SimulateRace()
+    private async Task SimulateRace()
     {
-        //hier moet nog een api call komen die de race simuleert en de resultaten teruggeeft
+        var url = $"simulate/raceweekend?IDUser={UserState.UserId}";
+        var response = await Http.GetAsync(url);
+    
+        if (response.IsSuccessStatusCode)
+        {
+			// UI bijwerken met de resultaten van het raceweekend
+        }
+        else
+        {
+            Console.WriteLine($"Error: {response.StatusCode}");
+        }
     }
 }

@@ -316,22 +316,41 @@ app.MapGet("get/Team/from/userID", async (int IDUser, F1_ManagerDbContext db) =>
 //Simulate
 app.MapGet("simulate/raceweekend", async (int IDUser, F1_ManagerDbContext db) =>
 {
-    return await db.Raceweekends
-     .Where(rw => rw.Fkuser == IDUser && rw.Completed == 0)
-     .FirstOrDefaultAsync();
+    var raceweekend = await db.Raceweekends
+        .Where(rw => rw.Fkuser == IDUser && rw.Completed == 0)
+        .FirstOrDefaultAsync();
+
     var teamUser = await GetTeamFromUser(IDUser, db);
-    if (raceweekend == null)
+
+    if (raceweekend == null || teamUser == null)
         return Results.NotFound("No raceweekend found");
 
+    var userDrivers = await GetDriversFromtUserTeam(teamUser.Idteam, db);
+    var allDrivers = await GetAllDefaultDrivers(db);
 
-    //moet nog veranderen
-    return Results.Ok(raceweekend);
+    var random = new Random();
+    var rankedDrivers = allDrivers
+        .Concat(userDrivers)
+        .OrderByDescending(d => d.Rating + random.Next(1, 20))
+        .ToList();
+
+    var PuntenVerdeling = new[] { 25, 18, 15, 12, 10, 8, 6, 4, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+    var results = rankedDrivers.Select((d, index) => new RaceResult(
+        Position: index + 1,
+        DriverId: d.Iddriver,
+        Name: $"{d.VoornaamDriver} {d.AchternaamDriver}",
+        Team: d.Fkteam,
+        Punten: PuntenVerdeling[index]
+    )).ToList();
+
+    await SaveRaceResults(results, raceweekend.IdraceWeekend, db);
+    await CompleteRaceWeekend(raceweekend, db);
+
+    return Results.Ok(results);
 });
 #endregion
-
-
 #region static functions
-//get team from user ID
 static async Task<Team?> GetTeamFromUser(int IDUser, F1_ManagerDbContext db)
 {
     return await db.Teams
@@ -339,6 +358,40 @@ static async Task<Team?> GetTeamFromUser(int IDUser, F1_ManagerDbContext db)
             .Any(u => u.Iduser == IDUser && u.Fkteam == t.Idteam))
         .FirstOrDefaultAsync();
 }
-
+static async Task<List<Driver>> GetDriversFromtUserTeam(int IDTeam, F1_ManagerDbContext db)
+{
+    return await db.Drivers
+        .Where(d => d.Fkteam == IDTeam)
+        .ToListAsync();
+}
+static async Task<List<Driver>> GetAllDefaultDrivers(F1_ManagerDbContext db)
+{
+    return await db.Drivers
+        .Where(d => d.Fkteam <= 10)
+        .ToListAsync();
+}
+static async Task SaveRaceResults(List<RaceResult> results, int raceweekendID, F1_ManagerDbContext db)
+{
+    foreach (var result in results)
+    {
+        var raceWeekendHasDriver = new Raceweekendhasdriver
+        {
+            Fkdriver = result.DriverId,
+            FkraceWeekend = raceweekendID,
+            Positie = result.Position,
+            Punten = result.Punten
+        };
+        db.Raceweekendhasdrivers.Add(raceWeekendHasDriver);
+    }
+    await db.SaveChangesAsync();
+}
+static async Task CompleteRaceWeekend(Raceweekend raceweekend, F1_ManagerDbContext db)
+{
+    raceweekend.Completed = 1;
+    await db.SaveChangesAsync();
+}
 #endregion
+
+
 app.Run();
+record RaceResult(int Position, int DriverId, string Name, int Team, int Punten);
