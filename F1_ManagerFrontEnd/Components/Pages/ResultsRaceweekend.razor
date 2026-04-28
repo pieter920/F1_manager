@@ -5,23 +5,59 @@
 @inject IJSRuntime JS
 @inject UserStateService UserState
 
-<h3>ResultsRaceweekend</h3>
-//kadertjes met de drivers en een keuze van auto dan via klik op knop simuleren race
-<button class="btn btn-primary" @onclick="SimulateRace">
-Simuleren </button>
+<h3>Race Resultaten</h3>
+
+<button class="btn btn-primary mb-3" @onclick="SimulateRace">Simuleren</button>
+
+@if (_results != null)
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Positie</th>
+                <th>Naam</th>
+                <th>Punten</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var result in _results)
+            {
+                <tr class="@(result.Team == _userTeamId ? "table-success" : "")">
+                    <td>@result.Position</td>
+                    <td>@result.Name</td>
+                    <td>@result.Punten</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
 @code {
+    private List<RaceResult>? _results;
+    private int _userTeamId;
+
     private async Task SimulateRace()
     {
+        Console.WriteLine($"UserState.UserId: {UserState.UserId}");
         var url = $"simulate/raceweekend?IDUser={UserState.UserId}";
         var response = await Http.GetAsync(url);
-    
+
         if (response.IsSuccessStatusCode)
         {
-			// UI bijwerken met de resultaten van het raceweekend
+            _results = await response.Content.ReadFromJsonAsync<List<RaceResult>>();
         }
         else
         {
             Console.WriteLine($"Error: {response.StatusCode}");
         }
+    }
+
+    public class RaceResult
+    {
+        public int Position { get; set; }
+        public int DriverId { get; set; }
+        public string Name { get; set; } = "";
+        public int Team { get; set; }
+        public int Punten { get; set; }
     }
 }

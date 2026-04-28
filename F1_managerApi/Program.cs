@@ -334,7 +334,7 @@ app.MapGet("simulate/raceweekend", async (int IDUser, F1_ManagerDbContext db) =>
         .OrderByDescending(d => d.Rating + random.Next(1, 20))
         .ToList();
 
-    var PuntenVerdeling = new[] { 25, 18, 15, 12, 10, 8, 6, 4, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    var PuntenVerdeling = new[] {25,18,15,12,10,8,6,4,2,1,0,0,0,0,0,0,0,0,0,0,0,0};
 
     var results = rankedDrivers.Select((d, index) => new RaceResult(
         Position: index + 1,
@@ -353,9 +353,15 @@ app.MapGet("simulate/raceweekend", async (int IDUser, F1_ManagerDbContext db) =>
 #region static functions
 static async Task<Team?> GetTeamFromUser(int IDUser, F1_ManagerDbContext db)
 {
+    var user = await db.Users
+        .Where(u => u.Iduser == IDUser)
+        .FirstOrDefaultAsync();
+
+    if (user == null || user.Fkteam == null)
+        return null;
+
     return await db.Teams
-        .Where(t => db.Users
-            .Any(u => u.Iduser == IDUser && u.Fkteam == t.Idteam))
+        .Where(t => t.Idteam == user.Fkteam)
         .FirstOrDefaultAsync();
 }
 static async Task<List<Driver>> GetDriversFromtUserTeam(int IDTeam, F1_ManagerDbContext db)
