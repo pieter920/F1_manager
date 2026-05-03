@@ -5,18 +5,26 @@
 @inject IJSRuntime JS
 @inject UserStateService UserState
 
-<h3>Race Resultaten</h3>
+<div class="d-flex justify-content-between align-items-start mb-3">
+    <h3>Race Resultaten</h3>
 
+    @if (_track != null)
+    {
+        <div class="card text-end px-3 py-2 shadow-sm" style="min-width:180px;">
+            <div class="fw-bold fs-6">🏁 @_track.NaamTrack</div>
+            <div class="text-muted small">@_track.LandTrack</div>
+            <div class="badge bg-secondary mt-1">@_track.LapsTrack ronden</div>
+        </div>
+    }
+</div>
 @if (_results == null)
 {
     <button class="btn btn-primary mb-3" @onclick="SimulateRace">Simuleren</button>
 }
 else
 {
-    <button class="btn btn-secondary mb-3" @onclick="GoHome">terug naar huis</button>
-}
-@if (_results != null)
-{
+    <button class="btn btn-secondary mb-3" @onclick="GoHome">Go Home</button>
+
     <table class="table table-striped">
         <thead>
             <tr>
@@ -41,10 +49,17 @@ else
 @code {
     private List<RaceResult>? _results;
     private int _userTeamId;
-
+    private TrackInfo? _track;
+    protected override async Task OnInitializedAsync()
+    {
+        var trackResponse = await Http.GetAsync($"get/track/by/user?IDUser={UserState.UserId}");
+        if (trackResponse.IsSuccessStatusCode)
+        {
+            _track = await trackResponse.Content.ReadFromJsonAsync<TrackInfo>();
+        }
+    }
     private async Task SimulateRace()
     {
-        Console.WriteLine($"UserState.UserId: {UserState.UserId}");
         var url = $"simulate/raceweekend?IDUser={UserState.UserId}";
         var response = await Http.GetAsync(url);
 
@@ -60,6 +75,12 @@ else
     private void GoHome()
     {
         Navigation.NavigateTo("/Home");
+    }
+    public class TrackInfo
+    {
+        public string NaamTrack { get; set; } = "";
+        public string LandTrack { get; set; } = "";
+        public int LapsTrack { get; set; }
     }
     public class RaceResult
     {

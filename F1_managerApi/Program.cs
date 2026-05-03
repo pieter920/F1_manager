@@ -1,4 +1,5 @@
 using F1_managerApi.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 
@@ -349,8 +350,26 @@ app.MapGet("simulate/raceweekend", async (int IDUser, F1_ManagerDbContext db) =>
 
     return Results.Ok(results);
 });
+app.MapGet("get/track/by/user", async (int IDUser, F1_ManagerDbContext db) =>
+{
+    var raceWeekend = await GetNextRaceWeekendForUser(IDUser, db);
+    if (raceWeekend == null) return Results.NotFound();
+
+    var track = await db.Tracks.FindAsync(raceWeekend.Fktrack);
+    if (track == null) return Results.NotFound();
+
+    return Results.Ok(new { track.NaamTrack, track.LandTrack, track.LapsTrack });
+});
+
 #endregion
 #region static functions
+static async Task<Raceweekend?> GetNextRaceWeekendForUser(int IDUser, F1_ManagerDbContext db)
+{
+    return await db.Raceweekends
+        .Where(rw => rw.Fkuser == IDUser && rw.Completed == 0)
+        .OrderBy(rw => rw.BeginDatum)
+        .FirstOrDefaultAsync();
+}
 static async Task<Team?> GetTeamFromUser(int IDUser, F1_ManagerDbContext db)
 {
     var user = await db.Users
