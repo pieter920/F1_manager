@@ -7,8 +7,14 @@
 
 <h3>Race Resultaten</h3>
 
-<button class="btn btn-primary mb-3" @onclick="SimulateRace">Simuleren</button>
-
+@if (_results == null)
+{
+    <button class="btn btn-primary mb-3" @onclick="SimulateRace">Simuleren</button>
+}
+else
+{
+    <button class="btn btn-secondary mb-3" @onclick="GoHome">terug naar huis</button>
+}
 @if (_results != null)
 {
     <table class="table table-striped">
@@ -51,7 +57,10 @@
             Console.WriteLine($"Error: {response.StatusCode}");
         }
     }
-
+    private void GoHome()
+    {
+        Navigation.NavigateTo("/Home");
+    }
     public class RaceResult
     {
         public int Position { get; set; }
