@@ -347,7 +347,7 @@ app.MapGet("simulate/raceweekend", async (int IDUser, F1_ManagerDbContext db) =>
 
     await SaveRaceResults(results, raceweekend.IdraceWeekend, db);
     await CompleteRaceWeekend(raceweekend, db);
-
+    await UpdateDriverRatings(rankedDrivers, db);
     return Results.Ok(results);
 });
 app.MapGet("get/track/by/user", async (int IDUser, F1_ManagerDbContext db) =>
@@ -360,7 +360,11 @@ app.MapGet("get/track/by/user", async (int IDUser, F1_ManagerDbContext db) =>
 
     return Results.Ok(new { track.NaamTrack, track.LandTrack, track.LapsTrack });
 });
-
+app.MapGet("get/driver/standings", async (int IDUser, F1_ManagerDbContext db) =>
+{
+    var standings = await GetDriverStandingsForSeason(IDUser, db);
+    return Results.Ok(standings);
+});
 #endregion
 #region static functions
 static async Task<Raceweekend?> GetNextRaceWeekendForUser(int IDUser, F1_ManagerDbContext db)
@@ -415,8 +419,54 @@ static async Task CompleteRaceWeekend(Raceweekend raceweekend, F1_ManagerDbConte
     raceweekend.Completed = 1;
     await db.SaveChangesAsync();
 }
+static async Task<List<DriverStanding>> GetDriverStandingsForSeason(int IDUser, F1_ManagerDbContext db)
+{
+    var seizoen = await db.Seizoens
+        .Where(s => s.Fkuser == IDUser)
+        .OrderByDescending(s => s.BeginDatum)
+        .FirstOrDefaultAsync();
+
+    if (seizoen == null) return new List<DriverStanding>();
+
+    var rwhd = await db.Raceweekendhasdrivers
+        .Include(rwhd => rwhd.FkraceWeekendNavigation)
+        .Include(rwhd => rwhd.FkdriverNavigation)
+            .ThenInclude(d => d.FkteamNavigation)
+        .Where(rwhd => rwhd.FkraceWeekendNavigation.Fkseizoen == seizoen.Idseizoen)
+        .ToListAsync();
+
+    return rwhd
+        .GroupBy(rwhd => rwhd.FkdriverNavigation)
+        .Select(ds => new DriverStanding(
+            ds.Key.Iddriver,
+            ds.Key.VoornaamDriver + " " + ds.Key.AchternaamDriver,
+            ds.Key.FkteamNavigation.NaamTeam,
+            ds.Sum(x => x.Punten)
+        ))
+        .OrderByDescending(d => d.Punten)
+        .ToList();
+}
+static async Task UpdateDriverRatings(List<Driver> drivers, F1_ManagerDbContext db)
+{
+    var random = new Random();
+    foreach (var driver in drivers)
+    {
+        if (driver.LeeftijdDriver < 30)
+        {
+            if (random.Next(100) < 45)
+                driver.Rating = Math.Min(99, driver.Rating + 1);
+        }
+        else if (driver.LeeftijdDriver > 35)
+        {
+            if (random.Next(100) < 45)
+                driver.Rating = Math.Max(1, driver.Rating - 1);
+        }
+    }
+    await db.SaveChangesAsync();
+}
 #endregion
 
 
 app.Run();
 record RaceResult(int Position, int DriverId, string Name, int Team, int Punten);
+record DriverStanding(int DriverId, string Naam, string Team, int Punten);
