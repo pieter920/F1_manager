@@ -10,7 +10,6 @@
 <div class="d-flex justify-content-between align-items-start mb-3">
     <div>
         <h1>Welcome to F1 Manager @UserState.Username</h1>
-        <button class="btn btn-primary me-2" @onclick="GoToTeams">ga naar Teams</button>
         <button class="btn btn-secondary" @onclick="GoToRaceweekend">ga naar volgend raceweekend</button>
     </div>
 
@@ -28,7 +27,7 @@
     @if (_standings != null)
     {
         <div class="card shadow-sm p-3" style="min-width:300px; max-width:350px;">
-            <h6 class="mb-3">🏆 Driver Standings</h6>
+            <h6 class="mb-3">Driver Standings</h6>
             <table class="table table-striped table-sm mb-0">
                 <thead>
                     <tr>
@@ -52,11 +51,6 @@
             </table>
         </div>
     }
-
-    @* Voeg hier extra containers toe naast de standings *@
-    @* <div class="card shadow-sm p-3" style="min-width:300px; max-width:350px;">
-        <h6>Volgende container</h6>
-    </div> *@
 </div>
 
 @code {
@@ -91,7 +85,6 @@
         }
     }
 
-    private void GoToTeams() => Navigation.NavigateTo("/Teams");
     private void GoToRaceweekend() => Navigation.NavigateTo("/ResultRaceweekend");
 
     public class DriverStanding
