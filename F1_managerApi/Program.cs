@@ -26,12 +26,6 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 //basic get request
 #region simple get request
-//get all drivers
-app.MapGet("get/Drivers", async (F1_ManagerDbContext db) =>
-{
-    var items = await db.Drivers.ToListAsync();
-    return Results.Ok(items);
-});
 //get first 10 teams
 app.MapGet("get/10/Teams", async (F1_ManagerDbContext db) =>
 {
@@ -116,7 +110,6 @@ app.MapPost("/user/register", async (string username, string password, F1_Manage
 //filter on user ID
 #region get stuf based on user
 //get all teams from user
-//aanpassen/weghalen
 app.MapGet("get/Teams/from/user", async (int IDUser, F1_ManagerDbContext db) =>
 {
     List<string> naamTeams = await db.Teams
