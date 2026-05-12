@@ -6,12 +6,10 @@ html, body {
     color: #f0f0f0;
 }
 
-/* Links */
 a, .btn-link {
     color: #e10600;
 }
 
-/* Primary button — F1 red */
 .btn-primary {
     color: #fff;
     background-color: #e10600;
@@ -26,7 +24,6 @@ a, .btn-link {
         border-color: #a00400;
     }
 
-/* Secondary button — dark grey */
 .btn-secondary {
     color: #fff;
     background-color: #2a2a2a;
@@ -41,19 +38,16 @@ a, .btn-link {
         border-color: #666;
     }
 
-/* Focus rings */
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
     box-shadow: 0 0 0 0.1rem #111, 0 0 0 0.25rem #e10600;
 }
 
-/* Cards */
 .card {
     background-color: #1a1a1a;
     border: 1px solid #2a2a2a;
     color: #f0f0f0;
 }
 
-/* Tables */
 .table {
     color: #f0f0f0;
 }
@@ -81,17 +75,15 @@ a, .btn-link {
     color: #fff;
 }
 
-/* User team highlight */
 .table-success {
-    background-color: #1a3d2b !important;
+    background-color: #1a3d2b ;
     color: #6dffaa !important;
 }
 
     .table-success td {
-        color: #6dffaa !important;
+        color: #6dffaa ;
     }
 
-/* Headings */
 h1, h2, h3, h4, h5, h6 {
     font-weight: 700;
     text-transform: uppercase;
@@ -104,7 +96,6 @@ h1 {
     margin-bottom: 1rem;
 }
 
-/* Content padding */
 .content {
     padding-top: 1.1rem;
 }
@@ -113,7 +104,6 @@ h1:focus {
     outline: none;
 }
 
-/* Form validation */
 .valid.modified:not([type=checkbox]) {
     outline: 1px solid #26b050;
 }
@@ -126,48 +116,35 @@ h1:focus {
     color: #e10600;
 }
 
-/* Badges */
-.badge.bg-secondary {
-    background-color: #e10600 !important;
-    color: #fff;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-}
 
-/* Top row */
 .top-row {
-    background-color: #1a1a1a !important;
+    background-color: #1a1a1a ;
     border-bottom: 1px solid #e10600;
 }
 
-/* Sidebar */
 .sidebar {
     background-color: #1a1a1a;
     border-right: 1px solid #2a2a2a;
 }
 
-/* Nav links */
 .nav-link {
     color: #f0f0f0 !important;
 }
 
     .nav-link:hover, .nav-link.active {
-        background-color: #e10600 !important;
-        color: #fff !important;
+        background-color: #e10600 ;
+        color: #fff ;
         border-radius: 4px;
     }
 
-/* Navbar brand */
 .navbar-brand {
-    color: #e10600 !important;
+    color: #e10600 ;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.1em;
 }
 
-/* NavMenu top row */
 .navbar-dark {
-    background-color: #1a1a1a !important;
+    background-color: #1a1a1a ;
     border-bottom: 1px solid #e10600;
 }
-
