@@ -6,7 +6,7 @@ html, body {
     color: #f0f0f0;
 }
 
-a, .btn-link {
+/*a, .btn-link {
     color: #e10600;
 }
 
@@ -41,14 +41,14 @@ a, .btn-link {
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
     box-shadow: 0 0 0 0.1rem #111, 0 0 0 0.25rem #e10600;
 }
-
+*/
 .card {
     background-color: #1a1a1a;
     border: 1px solid #2a2a2a;
     color: #f0f0f0;
 }
 
-.table {
+/*.table {
     color: #f0f0f0;
 }
 
@@ -82,7 +82,7 @@ a, .btn-link {
 
     .table-success td {
         color: #6dffaa ;
-    }
+    }*/
 
 h1, h2, h3, h4, h5, h6 {
     font-weight: 700;
@@ -103,7 +103,7 @@ h1 {
 h1:focus {
     outline: none;
 }
-
+/*
 .valid.modified:not([type=checkbox]) {
     outline: 1px solid #26b050;
 }
@@ -114,14 +114,14 @@ h1:focus {
 
 .validation-message {
     color: #e10600;
-}
+}*/
 
 
-.top-row {
-    background-color: #1a1a1a ;
+/*.top-row {
+    background-color: #5a5a5a ;
     border-bottom: 1px solid #e10600;
-}
-
+}*/
+/*
 .sidebar {
     background-color: #1a1a1a;
     border-right: 1px solid #2a2a2a;
@@ -148,3 +148,4 @@ h1:focus {
     background-color: #1a1a1a ;
     border-bottom: 1px solid #e10600;
 }
+*/

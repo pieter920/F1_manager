@@ -1,39 +1,432 @@
 ﻿@page "/register"
+@using F1_ManagerFrontEnd.Models
 @inject HttpClient Http
 @rendermode InteractiveServer
 @inject NavigationManager Navigation
 @inject IJSRuntime JS
 
-<h3>register</h3>
+<PageTitle>Create Team - F1 Team Manager</PageTitle>
 
-<div class="mb-3 mt-3">
-    <label for="username">Gebruikersnaam:</label>
-    <input type="text" class="form-control" id="username" placeholder="gebruikersnaam" @bind="_username" />
+<div class="register-page">
+
+    <div class="background-overlay"></div>
+
+    <div class="register-container">
+
+        <!-- LEFT SIDE -->
+
+        <div class="intro-section">
+
+            <a href="/" class="back-home">
+                ← Back to Home
+            </a>
+
+            <div class="intro-content">
+
+                <span class="season-label">
+                    CREATE YOUR DYNASTY
+                </span>
+
+                <div class="hero-title">
+
+                    <div class="accent-line"></div>
+
+                    <h1>
+                        BUILD YOUR<br />
+                        FORMULA 1 TEAM.
+                    </h1>
+
+                </div>
+
+                <p>
+                    Start your journey from the back of the grid to world championship glory.
+                    Choose your identity, secure sponsors, and create the next legendary F1 team.
+                </p>
+
+                <div class="starting-benefits">
+
+                    <div class="benefit-card">
+                        <div class="benefit-icon">🏎️</div>
+
+                        <div>
+                            <h3>Create Your Team</h3>
+                            <span>
+                                Choose your team name, colors, and identity.
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="benefit-card">
+                        <div class="benefit-icon">🔧</div>
+
+                        <div>
+                            <h3>Select Engine Supplier</h3>
+                            <span>
+                                Partner with elite manufacturers.
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="benefit-card">
+                        <div class="benefit-icon">💰</div>
+
+                        <div>
+                            <h3>Sign Sponsors</h3>
+                            <span>
+                                Secure funding for your championship ambitions.
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- RIGHT SIDE -->
+
+        <div class="form-section">
+
+            <div class="register-card">
+
+                <div class="register-header">
+                    <h2>Create Team</h2>
+
+                    <p>
+                        Enter the Formula 1 paddock
+                    </p>
+                </div>
+
+                <EditForm Model="@registerModel" OnValidSubmit="RegisterUser">
+
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+
+                    <!-- ACCOUNT -->
+
+                    <div class="section-title">
+                        Account Information
+                    </div>
+
+                    <div class="form-group">
+                        <label>Username</label>
+
+                        <InputText @bind-Value="registerModel.Username"
+                                   class="form-input"
+                                   placeholder="TeamPrincipal99" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Password</label>
+
+                        <InputText @bind-Value="registerModel.Password"
+                                   type="password"
+                                   class="form-input"
+                                   placeholder="Create password" />
+                    </div>
+
+                    <!-- TEAM -->
+
+                    <div class="section-title">
+                        Team Identity
+                    </div>
+
+                    <div class="form-group">
+                        <label>Team Name</label>
+
+                        <InputText @bind-Value="registerModel.TeamName"
+                                   class="form-input"
+                                   placeholder="Velocity GP" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Nation</label>
+
+                        <InputSelect @bind-Value="registerModel.Nation"
+                                     class="form-input">
+
+                            <option value="">Select nation</option>
+                            <option value="Belgium">Belgium</option>
+                            <option value="Spain">Spain</option>
+                            <option value="United Kingdom">United Kingdom</option>
+                            <option value="Italy">Italy</option>
+                            <option value="Germany">Germany</option>
+
+                        </InputSelect>
+                    </div>
+
+                    <button type="submit" class="register-button">
+                        Start Career
+                    </button>
+
+                </EditForm>
+
+                <div class="login-link">
+                    Already managing a team?
+                    <a href="/login">Login</a>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
 </div>
 
-<div class="mb-3">
-    <label for="password">Wachtwoord:</label>
-    <input type="password" class="form-control" id="password" placeholder="wachtwoord" @bind="_password" />
-</div>
 
-<button class="btn btn-primary" @onclick="RegisterUser">register</button>
 
-@code {
-    private string _username = "";
-    private string _password = "";
-
-    private async Task RegisterUser()
-    {
-        var url = $"/user/register?username={Uri.EscapeDataString(_username)}&password={Uri.EscapeDataString(_password)}";
-        var response = await Http.PostAsync(url, null);
-
-        if (response.IsSuccessStatusCode)
-        {
-            Navigation.NavigateTo("/login");
-        }
-        else
-        {
-            await JS.InvokeVoidAsync("alert", "Onbekende fout bij register.");
-        }
+<style>
+    .register-page {
+        min-height: 100vh;
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient( to right, rgba(0,0,0,0.94), rgba(0,0,0,0.78)), url('/images/register-background.jpg') center/cover no-repeat;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 32px;
     }
-}
+
+    .background-overlay {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient( circle at top right, rgba(255,0,0,0.12), transparent 30%);
+    }
+
+    /* MAIN */
+
+    .register-container {
+        position: relative;
+        z-index: 2;
+        width: 100%;
+        max-width: 1500px;
+        display: grid;
+        grid-template-columns: 1fr 0.95fr;
+        border-radius: 32px;
+        overflow: hidden;
+        background: linear-gradient( to bottom, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
+        border: 1px solid rgba(255,255,255,0.06);
+        backdrop-filter: blur(18px);
+        box-shadow: 0 25px 80px rgba(0,0,0,0.5);
+    }
+
+    /* LEFT */
+
+    .intro-section {
+        padding: 60px;
+    }
+
+    .back-home {
+        color: #bfbfbf;
+        text-decoration: none;
+        transition: 0.2s ease;
+    }
+
+        .back-home:hover {
+            color: white;
+        }
+
+    .intro-content {
+        margin-top: 70px;
+    }
+
+    .season-label {
+        display: inline-block;
+        padding: 10px 18px;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.08);
+        color: #ff3b30;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 3px;
+    }
+
+    /* HERO */
+
+    .hero-title {
+        display: flex;
+        gap: 22px;
+        margin-top: 35px;
+    }
+
+    .accent-line {
+        width: 5px;
+        min-height: 170px;
+        border-radius: 999px;
+        background: linear-gradient( to bottom, #ff2d2d, #700000);
+    }
+
+    .intro-content h1 {
+        margin: 0;
+        color: white;
+        font-size: 3.4rem;
+        line-height: 1.02;
+        text-transform: uppercase;
+    }
+
+    .intro-content p {
+        margin-top: 32px;
+        max-width: 580px;
+        color: #bdbdbd;
+        line-height: 1.8;
+        font-size: 1.05rem;
+    }
+
+    /* BENEFITS */
+
+    .starting-benefits {
+        margin-top: 60px;
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+    }
+
+    .benefit-card {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding: 22px;
+        border-radius: 22px;
+        background: linear-gradient( to right, rgba(255,255,255,0.045), rgba(255,255,255,0.02));
+        border: 1px solid rgba(255,255,255,0.05);
+        transition: 0.25s ease;
+    }
+
+        .benefit-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255,0,0,0.18);
+        }
+
+    .benefit-icon {
+        width: 58px;
+        height: 58px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 16px;
+        background: linear-gradient( 135deg, #ff2d2d, #a10000);
+        font-size: 1.35rem;
+    }
+
+    .benefit-card h3 {
+        margin: 0 0 6px 0;
+        color: white;
+        letter-spacing: 1px;
+    }
+
+    .benefit-card span {
+        color: #bcbcbc;
+        font-size: 0.95rem;
+    }
+
+    /* RIGHT */
+
+    .form-section {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 60px;
+    }
+
+    .register-card {
+        width: 100%;
+        max-width: 520px;
+        padding: 50px;
+        border-radius: 28px;
+        background: linear-gradient( to bottom, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+        border: 1px solid rgba(255,255,255,0.06);
+        backdrop-filter: blur(16px);
+    }
+
+    /* HEADER */
+
+    .register-header {
+        margin-bottom: 40px;
+    }
+
+        .register-header h2 {
+            margin: 0 0 10px 0;
+            color: white;
+            font-size: 3rem;
+            text-transform: uppercase;
+        }
+
+        .register-header p {
+            margin: 0;
+            color: #a8a8a8;
+        }
+
+    /* FORM */
+
+    .section-title {
+        margin-bottom: 20px;
+        margin-top: 35px;
+        color: #ff3b30;
+        font-size: 0.9rem;
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+    }
+
+    .form-group {
+        margin-bottom: 24px;
+    }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: #e3e3e3;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+    /* CHECKBOX */
+
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 10px;
+        margin-bottom: 30px;
+        color: #c9c9c9;
+    }
+
+    /* BUTTON */
+
+    .register-button {
+        width: 100%;
+        height: 62px;
+        border: none;
+        border-radius: 18px;
+        background: linear-gradient( 135deg, #ff2d2d, #b80000);
+        color: white;
+        font-size: 1rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: 0.25s ease;
+        box-shadow: 0 14px 30px rgba(255,0,0,0.28);
+    }
+
+        .register-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 18px 40px rgba(255,0,0,0.38);
+        }
+
+    /* LOGIN */
+
+    .login-link {
+        margin-top: 30px;
+        text-align: center;
+        color: #bcbcbc;
+    }
+
+        .login-link a {
+            color: #ff3b30;
+            text-decoration: none;
+            font-weight: 700;
+        }
+</style>

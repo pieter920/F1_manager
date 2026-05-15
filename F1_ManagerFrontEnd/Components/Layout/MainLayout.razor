@@ -14,7 +14,7 @@
     }
 
     <main>
-    <div class="top-row px-4">
+ @*    <div class="top-row px-4">
             @if (!NavManager.Uri.Contains("/login") && !NavManager.Uri.EndsWith("/")
                             && !NavManager.Uri.EndsWith("/register") && !NavManager.Uri.EndsWith("/CreateTeam") 
                                         && !NavManager.Uri.EndsWith("/CreateDriver") && !NavManager.Uri.EndsWith("/CreateDriver2"))
@@ -22,9 +22,9 @@
                 <F1_ManagerFrontEnd.Components.UserDropdown />
             }
 
-    </div>
+    </div> *@
 
-        <article class="content px-4">
+        <article>
             @Body
         </article>
     </main>

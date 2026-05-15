@@ -81,13 +81,24 @@ app.MapGet("/user/check", async (string username, string password, F1_ManagerDbC
     var user = await db.Users
         .FirstOrDefaultAsync(u => u.NameUser == username && u.PassWordUser == password);
 
+
+    //new
+    //if (user == null)
+    //{
+    //    return Results.Unauthorized();
+    //} else
+    //{
+    //    return user;
+    //};
+
     if (user == null)
         return Results.Unauthorized();
 
     return Results.Ok(new
     {
         UserId = user.Iduser,
-        Username = user.NameUser
+        Username = user.NameUser,
+        UserTeam = user.Fkteam
     });
 });
 //register
@@ -103,7 +114,7 @@ app.MapPost("/user/register", async (string username, string password, F1_Manage
     db.Users.Add(User);
     await db.SaveChangesAsync();
 
-    return Results.Created($"/user/register", User);
+    return Results.Created($"/user/register", new {UserId = User.Iduser, username = User.NameUser });
 });
 
 #endregion
@@ -148,8 +159,10 @@ app.MapPost("/Create/Team", async (string NaamTeam, string NationaliteitTeam,int
     var exists = await db.Teams
     .Where(ID => ID.Idteam <= 10)
     .AnyAsync(pbl => pbl.NaamTeam == NaamTeam);
+
     if (exists)
         return Results.Conflict("Team already exists F1_manager");
+
     //zet in databank
     var Team = new Team { NaamTeam = NaamTeam, NationaliteitTeam = NationaliteitTeam };
 
@@ -157,12 +170,18 @@ app.MapPost("/Create/Team", async (string NaamTeam, string NationaliteitTeam,int
     await db.SaveChangesAsync();
 
     var user = await db.Users.FirstOrDefaultAsync(u => u.Iduser == UserID);
+
     if (user == null)
         return Results.NotFound("User not found");
     user.Fkteam = Team.Idteam; 
     await db.SaveChangesAsync();
 
-    return Results.Created($"/Create/Team", Team);
+    return Results.Created("/Create/Team", new
+    {
+        TeamId = Team.Idteam,
+        TeamName = Team.NaamTeam,
+        Nationality = Team.NationaliteitTeam
+    });
 });
 
 #endregion
