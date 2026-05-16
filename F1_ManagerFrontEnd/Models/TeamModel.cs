@@ -2,8 +2,8 @@
 {
     public class TeamModel
     {
-        public int Id { get; set; }
-        public string Naam { get; set; } = "";
-        public string Nationaliteit { get; set; } = "";
+        public int teamId { get; set; }
+        public string teamName { get; set; } = "";
+        public string Nationality { get; set; } = "";
     }
 }

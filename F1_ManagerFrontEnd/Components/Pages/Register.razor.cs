@@ -38,7 +38,7 @@ namespace F1_ManagerFrontEnd.Components.Pages
                     return;
                 }
 
-                UserState.TeamId = CreateTeamUrlResponse.Id;
+                UserState.TeamId = CreateTeamUrlResponse.teamId;
 
                 await CreateCalender(); 
 
