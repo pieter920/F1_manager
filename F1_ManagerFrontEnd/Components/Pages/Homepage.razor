@@ -1,0 +1,226 @@
+﻿@page "/"
+
+<PageTitle>F1 Team Manager</PageTitle>
+
+<div class="homepage">
+    <div class="overlay"></div>
+
+    <div class="hero-container">
+        <div class="hero-content">
+            <div class="tagline">
+                <span>2026 SEASON LIVE</span>
+            </div>
+
+            <h1>
+                Build Your Legacy.<br />
+                Dominate The Grid.
+            </h1>
+
+            <p class="description">
+                Manage your own Formula 1 team in the ultimate browser-based F1 manager experience.
+                Hire drivers, develop your car, outsmart rivals, and fight for the world championship.
+            </p>
+
+            <div class="action-buttons">
+                <a href="/register" class="btn-primary">
+                    Start Your Team
+                </a>
+
+                <a href="/login" class="btn-secondary">
+                    Login
+                </a>
+            </div>
+
+            <div class="stats">
+                <div class="stat-card">
+                    <h3>20</h3>
+                    <span>Teams</span>
+                </div>
+
+                <div class="stat-card">
+                    <h3>Live</h3>
+                    <span>Race Strategy</span>
+                </div>
+
+                <div class="stat-card">
+                    <h3>Online</h3>
+                    <span>Multiplayer</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="hero-car">
+            <img src="images/f1-car.png" alt="F1 Car" />
+        </div>
+    </div>
+</div>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: 'Segoe UI', sans-serif;
+        background: #050505;
+        overflow-x: hidden;
+    }
+
+    .homepage {
+        position: relative;
+        min-height: 100vh;
+        background: linear-gradient(to right, rgba(0,0,0,0.92), rgba(0,0,0,0.55)), url('/images/f1-background.jpg') center/cover no-repeat;
+        display: flex;
+        align-items: center;
+        padding: 40px 80px;
+        color: white;
+    }
+
+    .overlay {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at top right, rgba(255,0,0,0.15), transparent 30%);
+    }
+
+    .hero-container {
+        position: relative;
+        z-index: 2;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 60px;
+    }
+
+    .hero-content {
+        max-width: 650px;
+    }
+
+    .tagline {
+        display: inline-flex;
+        align-items: center;
+        background: rgba(255,255,255,0.08);
+        border: 1px solid rgba(255,255,255,0.1);
+        padding: 8px 18px;
+        border-radius: 999px;
+        margin-bottom: 24px;
+        backdrop-filter: blur(6px);
+    }
+
+        .tagline span {
+            color: #ff3b30;
+            font-weight: 700;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+        }
+
+    h1 {
+        font-size: 4.5rem;
+        line-height: 1;
+        margin: 0 0 24px 0;
+        font-weight: 900;
+        text-transform: uppercase;
+    }
+
+    .description {
+        font-size: 1.15rem;
+        line-height: 1.8;
+        color: #c9c9c9;
+        margin-bottom: 40px;
+        max-width: 560px;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 50px;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        padding: 16px 32px;
+        border-radius: 12px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all 0.25s ease;
+        font-size: 1rem;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #ff2d2d, #c40000);
+        color: white;
+        box-shadow: 0 10px 25px rgba(255, 0, 0, 0.3);
+    }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 30px rgba(255, 0, 0, 0.45);
+        }
+
+    .btn-secondary {
+        border: 1px solid rgba(255,255,255,0.2);
+        background: rgba(255,255,255,0.05);
+        color: white;
+        backdrop-filter: blur(8px);
+    }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.12);
+        }
+
+    .stats {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .stat-card {
+        min-width: 140px;
+        padding: 20px;
+        border-radius: 18px;
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.08);
+        backdrop-filter: blur(10px);
+    }
+
+        .stat-card h3 {
+            margin: 0;
+            font-size: 2rem;
+            color: #ff3b30;
+        }
+
+        .stat-card span {
+            color: #d0d0d0;
+            font-size: 0.95rem;
+        }
+
+    .hero-car {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+        .hero-car img {
+            width: 100%;
+            max-width: 700px;
+            object-fit: contain;
+            filter: drop-shadow(0 25px 45px rgba(255,0,0,0.35));
+            animation: floatCar 4s ease-in-out infinite;
+        }
+
+    @@keyframes floatCar {
+        0% {
+            transform: translateY(0px);
+        }
+
+        50% {
+            transform: translateY(-10px);
+        }
+
+        100% {
+            transform: translateY(0px);
+        }
+    }
+</style>

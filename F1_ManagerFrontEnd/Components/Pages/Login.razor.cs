@@ -1,36 +1,38 @@
+using F1_ManagerFrontEnd.Models;
+using F1_ManagerFrontEnd.Services;
 using Microsoft.JSInterop;
 
 namespace F1_ManagerFrontEnd.Components.Pages
 {
     public partial class Login
     {
-        private string _username = "";
-        private string _password = "";
-        private int _userId = 0;
+        readonly LoginModel loginModel = new();
 
         public async Task LoginUser()
         {
-            var url = $"/user/check?username={Uri.EscapeDataString(_username)}&password={Uri.EscapeDataString(_password)}";
+            var url = $"/user/check?username={Uri.EscapeDataString(loginModel.UserName)}&password={Uri.EscapeDataString(loginModel.Password)}";
             var response = await Http.GetAsync(url);
 
             if (response.IsSuccessStatusCode)
             {
-                var url2 = $"get/ID/from/username?username={Uri.EscapeDataString(_username)}";
-                var response2 = await Http.GetAsync(url2);
-                _userId = await response2.Content.ReadFromJsonAsync<int>();
+                var userResponse = await response.Content.ReadFromJsonAsync<UserStateService>();
+                if (userResponse is null)
+                {
+                    await JS.InvokeVoidAsync("alert", "Onjuiste antwoord van server.");
+                    return;
+                }
 
-                var url3 = $"get/empty/team/from/user?IDUser={_userId}";
-                var response3 = await Http.GetAsync(url3);
-                var hasNoTeam = await response3.Content.ReadFromJsonAsync<bool>();
-                UserState.UserId = _userId;
-                UserState.Username = _username;
-                if (hasNoTeam)
+                UserState.UserId = userResponse.UserId;
+                UserState.Username = userResponse.Username;
+                UserState.TeamId = userResponse.TeamId;
+
+                if (UserState.TeamId is null)
                 {
                     Navigation.NavigateTo("/CreateTeam");
                 }
                 else
                 {
-                    Navigation.NavigateTo("/Home");
+                    Navigation.NavigateTo("/Dashboard");
                 }
             }
             else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)

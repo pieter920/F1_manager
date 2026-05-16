@@ -1,93 +1,190 @@
 ﻿@page "/ResultRaceweekend"
+@using F1_ManagerFrontEnd.Models
 @rendermode InteractiveServer
 @inject HttpClient Http
 @inject NavigationManager Navigation
 @inject IJSRuntime JS
 @inject UserStateService UserState
 
-<div class="d-flex justify-content-between align-items-start mb-3">
-    <h3>Race Resultaten</h3>
+<PageTitle>Race Results - F1 Manager</PageTitle>
 
-    @if (_track != null)
-    {
-        <div class="card text-end px-3 py-2 shadow-sm" style="min-width:180px;">
-            <div class="fw-bold fs-6">@_track.NaamTrack</div>
-            <div class="text-muted small">@_track.LandTrack</div>
-            <div class="badge bg-secondary mt-1">@_track.LapsTrack ronden</div>
+<div class="results-page">
+
+    
+
+    <div class="results-header">
+
+        <span class="results-label">
+            RACE RESULTS
+        </span>
+
+        
+
+        <h1>
+            @_track?.NaamTrack            
+        </h1>
+
+        <p>
+            @_track?.LandTrack • @_track?.LapsTrack laps            
+        </p>
+
+        <div>
+            <button class="continue-btn" @onclick="GoHome">Continue</button>
         </div>
-    }
-</div>
-@if (_results == null)
-{
-    <button class="btn btn-primary mb-3" @onclick="SimulateRace">Simuleren</button>
-}
-else
-{
-    <button class="btn btn-secondary mb-3" @onclick="GoHome">Go Home</button>
+        
+    </div>
 
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Positie</th>
-                <th>Naam</th>
-                <th>Punten</th>
-            </tr>
-        </thead>
-        <tbody>
+    <div class="results-table">
+
+        <div class="table-header">
+
+            <div>POS</div>
+            <div>DRIVER</div>
+            <div>TEAM</div>
+            <div>PTS</div>
+
+        </div>
+
+        @if(_results is not null)
+        {
             @foreach (var result in _results)
             {
-                <tr class="@(result.Team == _userTeamId ? "table-success" : "")">
-                    <td>@result.Position</td>
-                    <td>@result.Name</td>
-                    <td>@result.Punten</td>
-                </tr>
+                <div class="result-row">
+
+                    <div class="position">
+                        @result.Position
+                    </div>
+
+                    <div class="driver">
+                        @result.Name
+                    </div>
+
+                    <div class="team">
+                        @result.Team
+                    </div>
+
+                    <div class="points">
+                        @result.Punten
+                    </div>
+
+                </div>
             }
-        </tbody>
-    </table>
-}
+        }
 
-@code {
-    private List<RaceResult>? _results;
-    private int _userTeamId;
-    private TrackInfo? _track;
-    protected override async Task OnInitializedAsync()
-    {
-        var trackResponse = await Http.GetAsync($"get/track/by/user?IDUser={UserState.UserId}");
-        if (trackResponse.IsSuccessStatusCode)
-        {
-            _track = await trackResponse.Content.ReadFromJsonAsync<TrackInfo>();
-        }
-    }
-    private async Task SimulateRace()
-    {
-        var url = $"simulate/raceweekend?IDUser={UserState.UserId}";
-        var response = await Http.GetAsync(url);
 
-        if (response.IsSuccessStatusCode)
-        {
-            _results = await response.Content.ReadFromJsonAsync<List<RaceResult>>();
+    </div>
+
+</div>
+
+
+
+<style>
+    .results-page {
+        min-height: 100vh;
+        background: linear-gradient( to bottom, #050505, #0d0d0d);
+        padding: 40px;
+        color: white;
+    }
+
+    /* HEADER */
+
+    .results-header {
+        margin-bottom: 50px;
+    }
+
+    .results-label {
+        color: #ff3b30;
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 3px;
+    }
+
+    .results-header h1 {
+        margin: 20px 0 10px 0;
+        font-size: 3.5rem;
+        text-transform: uppercase;
+    }
+
+    .results-header p {
+        color: #999;
+        font-size: 1.05rem;
+    }
+
+    /* TABLE */
+
+    .results-table {
+        border-radius: 28px;
+        overflow: hidden;
+        border: 1px solid rgba(255,255,255,0.06);
+        background: linear-gradient( to bottom, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+    }
+
+    /* HEADER */
+
+    .table-header,
+    .result-row {
+        display: grid;
+        grid-template-columns: 120px 1.5fr 1.5fr 120px;
+        align-items: center;
+    }
+
+    .table-header {
+        background: rgba(255,255,255,0.04);
+        padding: 22px 30px;
+        color: #8f8f8f;
+        font-size: 0.8rem;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+    }
+
+    .result-row {
+        padding: 24px 30px;
+        border-top: 1px solid rgba(255,255,255,0.05);
+        transition: 0.2s ease;
+    }
+
+        .result-row:hover {
+            background: rgba(255,255,255,0.03);
         }
-        else
-        {
-            Console.WriteLine($"Error: {response.StatusCode}");
+
+    /* CELLS */
+
+    .position {
+        font-size: 1.6rem;
+        font-weight: 800;
+        color: #ff3b30;
+    }
+
+    .driver {
+        font-size: 1.05rem;
+        font-weight: 700;
+    }
+
+    .team {
+        color: #b1b1b1;
+    }
+
+    .points {
+        font-size: 1.1rem;
+        font-weight: 700;
+    }
+
+    .continue-btn {
+        height: 42px;
+        padding: 0 24px;
+        border-radius: 999px;
+        background: linear-gradient(180deg, #ff2b2b 0%, #d40000 100%);
+        color: white;
+        font-weight: 700;
+        font-size: 15px;
+        letter-spacing: 0.2px;
+        border: none;
+        transition: all 0.2s ease;
+    }
+
+        .continue-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 0 18px rgba(255, 0, 0, 0.35);
         }
-    }
-    private void GoHome()
-    {
-        Navigation.NavigateTo("/Home");
-    }
-    public class TrackInfo
-    {
-        public string NaamTrack { get; set; } = "";
-        public string LandTrack { get; set; } = "";
-        public int LapsTrack { get; set; }
-    }
-    public class RaceResult
-    {
-        public int Position { get; set; }
-        public int DriverId { get; set; }
-        public string Name { get; set; } = "";
-        public int Team { get; set; }
-        public int Punten { get; set; }
-    }
-}
+
+</style>

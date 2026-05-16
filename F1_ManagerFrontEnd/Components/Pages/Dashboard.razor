@@ -1,0 +1,515 @@
+﻿@page "/dashboard"
+@using F1_ManagerFrontEnd.Models
+@using System.Globalization
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject UserStateService UserState
+@inject IJSRuntime JS
+@rendermode InteractiveServer
+
+<PageTitle>Dashboard - F1 Manager</PageTitle>
+
+<div class="dashboard-page">
+
+    <!-- TOPBAR -->
+
+    <div class="topbar">
+
+        <div>
+            <span class="welcome-text">
+                Welcome back
+            </span>
+
+            <h1>
+                <div class="dropdown" @onclick:stopPropagation>
+                    <a @onclick="ToggleDropdown" style="cursor:pointer;">
+                        @* <span style="font-size:large">▼</span>  *@@UserState.Username
+                    </a>
+                    @if (_showDropdown)
+                    {
+                        <div style="display:block; background:#111111; padding:5px; z-index:1000;">
+                            <a @onclick="Logout" style="cursor:pointer; display:block; padding:5px 10px; font-size:medium">Log out</a>
+                        </div>
+                    }
+                </div>
+                @* @UserState.Username *@
+            </h1>
+        </div>
+
+        <button type="button" class="next-race-button" @onclick="GoToRaceweekend">
+            Simulate
+        </button>
+
+    </div>
+
+    <!-- GRID -->
+
+    <div class="dashboard-grid">
+
+        <!-- TEAM -->
+
+        <div class="dashboard-card team-card">
+
+            <div class="card-header">
+                Team Overview
+            </div>
+
+            <div class="team-name">
+                @team.teamName
+            </div>
+
+            <div class="team-country">
+                @team.Nationality
+            </div>
+
+            <div class="car-section">
+
+                <div class="car-name">
+                    @CarName
+                </div>
+
+                <div class="performance-wrapper">
+
+                    <span>Car Performance</span>
+
+                    <div class="performance-bar">
+                        <div class="performance-fill"
+                             style="width:@CarPerformance%">
+                        </div>
+                    </div>
+
+                    <span class="performance-value">
+                        @CarPerformance
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- NEXT RACE -->
+
+        <div class="dashboard-card next-race-card">
+
+            <div class="card-header">
+                Next Race
+            </div>
+
+            <div class="track-name">
+                @track.NaamTrack
+            </div>
+
+            <div class="track-country">
+                @track.LandTrack
+            </div>
+
+            <div class="race-info">
+
+                
+                <div>
+                    <span class="info-label">Begin datum</span>
+                    <span class="info-value">@track.Begindatum</span>
+                </div>
+
+                <div>
+                    <span class="info-label">Eind Datum</span>
+                    <span class="info-value">@track.EindDatum</span>
+                </div>
+
+                <div>
+                    <span class="info-label">Laps</span>
+                    <span class="info-value">@track.LapsTrack</span>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- DRIVERS -->
+
+        <div class="dashboard-card drivers-card">
+
+            <div class="card-header">
+                Drivers
+            </div>
+            @if (Drivers.Count < 2)
+            {
+                <div class="drivers-warning">
+
+                    <div class="warning-text">
+                        Your team needs 2 drivers before you can simulate race weekends.
+                    </div>
+
+                    <button class="add-driver-button"
+                            @onclick="OpenCreateDriver">
+
+                        + Add New Driver
+
+                    </button>
+
+                </div>
+            }
+            @foreach (var driver in Drivers)
+            {
+                <div class="driver-row">
+
+                    <div>
+
+                        <div class="driver-name">
+                            @driver.VoornaamDriver @driver.AchternaamDriver
+                        </div>
+
+                        <div class="driver-nationality">
+                            @driver.NationaliteitDriver
+                        </div>
+
+                    </div>
+
+                    <div class="driver-stats">
+                        <div>
+                            <span>AGE</span>
+                            <strong>@driver.LeeftijdDriver</strong>
+                        </div>
+
+                        <div>
+                            <span>RTG</span>
+                            <strong>@driver.Rating</strong>
+                        </div>
+
+                        <div>
+                            <span>CONF</span>
+                            <strong>@driver.Confidence</strong>
+                        </div>
+
+                    </div>
+
+                </div>
+            }
+
+        </div>
+
+        <!-- SEASON  TODO: IMPLEMENT SOMETHING DECENT-->
+
+        <div class="dashboard-card season-card"
+             @onclick="GoToNextPage">
+
+            <div class="card-header">
+                Season Progress
+            </div>
+
+            <div class="season-progress">
+
+                <div class="progress-circle"
+                     style="background: conic-gradient(
+                    #ff2d2d @(percentage.ToString(CultureInfo.InvariantCulture))%,
+                    #2b2b2b 0);">
+
+                    <span>@CompletedRaces/24</span>
+
+                </div>
+
+                <div class="season-text">
+                    Race weekends completed
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<style>
+    .dashboard-page {
+        min-height: 100vh;
+        background: linear-gradient( to bottom, #050505, #0d0d0d);
+        padding: 40px;
+        color: white;
+    }
+
+    /* TOPBAR */
+
+    .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 40px;
+    }
+
+    .welcome-text {
+        color: #8f8f8f;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+
+    .topbar h1 {
+        margin: 8px 0 0 0;
+        font-size: 3rem;
+        text-transform: uppercase;
+    }
+
+    .next-race-button {
+        height: 56px;
+        padding: 0 28px;
+        border: none;
+        border-radius: 16px;
+        background: linear-gradient( 135deg, #ff2d2d, #b80000);
+        color: white;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.2s ease;
+    }
+
+        .next-race-button:hover {
+            transform: translateY(-2px);
+        }
+
+    /* GRID */
+
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 24px;
+    }
+
+    /* CARDS */
+
+    .dashboard-card {
+        background: linear-gradient( to bottom, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 28px;
+        padding: 30px;
+        backdrop-filter: blur(12px);
+    }
+
+    .card-header {
+        color: #8f8f8f;
+        font-size: 0.82rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 28px;
+    }
+
+    /* TEAM */
+
+    .team-card {
+        grid-column: span 6;
+    }
+
+    .team-name {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: 8px;
+    }
+
+    .team-country {
+        color: #a1a1a1;
+        margin-bottom: 40px;
+    }
+
+    .car-name {
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin-bottom: 18px;
+    }
+
+    .performance-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .performance-bar {
+        width: 100%;
+        height: 14px;
+        border-radius: 999px;
+        overflow: hidden;
+        background: rgba(255,255,255,0.08);
+    }
+
+    .performance-fill {
+        height: 100%;
+        border-radius: 999px;
+        background: linear-gradient( to right, #ff2d2d, #ff7a00);
+    }
+
+    .performance-value {
+        color: #ff3b30;
+        font-weight: 700;
+    }
+
+    /* NEXT RACE */
+
+    .next-race-card {
+        grid-column: span 6;
+    }
+
+    .track-name {
+        font-size: 2rem;
+        font-weight: 800;
+        margin-bottom: 10px;
+    }
+
+    .track-country {
+        color: #b1b1b1;
+        margin-bottom: 40px;
+    }
+
+    .race-info {
+        display: flex;
+        gap: 50px;
+    }
+
+    .info-label {
+        display: block;
+        color: #8f8f8f;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+    }
+
+    .info-value {
+        font-size: 1.1rem;
+        font-weight: 700;
+    }
+
+    /* DRIVERS */
+
+    .drivers-card {
+        grid-column: span 8;
+    }
+
+    .driver-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 22px;
+        border-radius: 18px;
+        background: rgba(255,255,255,0.03);
+        margin-bottom: 18px;
+    }
+
+    .driver-name {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: 6px;
+    }
+
+    .driver-nationality {
+        color: #9a9a9a;
+    }
+
+    .driver-stats {
+        display: flex;
+        gap: 28px;
+    }
+
+        .driver-stats div {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .driver-stats span {
+            font-size: 0.7rem;
+            color: #8f8f8f;
+            margin-bottom: 4px;
+        }
+
+        .driver-stats strong {
+            font-size: 1.2rem;
+        }
+    /* DRIVER WARNING */
+
+    .drivers-warning {
+        margin-bottom: 24px;
+        padding: 22px;
+        border-radius: 20px;
+        background: linear-gradient( to right, rgba(255,59,48,0.12), rgba(255,59,48,0.04));
+        border: 1px solid rgba(255,59,48,0.18);
+    }
+
+    .warning-text {
+        margin-bottom: 18px;
+        color: #ffb3ae;
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+
+    /* ADD DRIVER BUTTON */
+
+    .add-driver-button {
+        height: 52px;
+        padding: 0 22px;
+        border: none;
+        border-radius: 16px;
+        background: rgba(255,255,255,0.06);
+        color: white;
+        font-size: 0.92rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+        .add-driver-button:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-1px);
+        }
+
+    /* SEASON */
+
+    .season-card {
+        grid-column: span 4;
+    }
+
+    .season-progress {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+    }
+
+    .progress-circle {
+        width: 160px;
+        height: 160px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: white;
+        position: relative;
+    }
+
+        .progress-circle::before {
+            content: "";
+            position: absolute;
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            background: #111;
+            z-index: 1;
+        }
+
+    .progress-circle {
+        z-index: 2;
+    }
+
+        .progress-circle span {
+            position: relative;
+            z-index: 2;
+        }
+
+    .season-text {
+        color: #a1a1a1;
+        text-align: center;
+    }
+</style>

@@ -6,83 +6,11 @@ html, body {
     color: #f0f0f0;
 }
 
-a, .btn-link {
-    color: #e10600;
-}
-
-.btn-primary {
-    color: #fff;
-    background-color: #e10600;
-    border-color: #c00500;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-}
-
-    .btn-primary:hover {
-        background-color: #c00500;
-        border-color: #a00400;
-    }
-
-.btn-secondary {
-    color: #fff;
-    background-color: #2a2a2a;
-    border-color: #444;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-}
-
-    .btn-secondary:hover {
-        background-color: #3a3a3a;
-        border-color: #666;
-    }
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-    box-shadow: 0 0 0 0.1rem #111, 0 0 0 0.25rem #e10600;
-}
-
 .card {
     background-color: #1a1a1a;
     border: 1px solid #2a2a2a;
     color: #f0f0f0;
 }
-
-.table {
-    color: #f0f0f0;
-}
-
-.table-striped > tbody > tr:nth-of-type(odd) > * {
-    background-color: #1f1f1f;
-    color: #f0f0f0;
-}
-
-.table-striped > tbody > tr:nth-of-type(even) > * {
-    background-color: #181818;
-    color: #f0f0f0;
-}
-
-.table thead tr {
-    background-color: #e10600;
-    color: #fff;
-    text-transform: uppercase;
-    font-size: 0.8rem;
-    letter-spacing: 0.08em;
-}
-
-.table thead th {
-    border-bottom: 2px solid #e10600;
-    color: #fff;
-}
-
-.table-success {
-    background-color: #1a3d2b;
-    color: #6dffaa;
-}
-
-    .table-success td {
-        color: #6dffaa ;
-    }
 
 h1, h2, h3, h4, h5, h6 {
     font-weight: 700;
@@ -102,49 +30,4 @@ h1 {
 
 h1:focus {
     outline: none;
-}
-
-.valid.modified:not([type=checkbox]) {
-    outline: 1px solid #26b050;
-}
-
-.invalid {
-    outline: 1px solid #e10600;
-}
-
-.validation-message {
-    color: #e10600;
-}
-
-
-.top-row {
-    background-color: #1a1a1a ;
-    border-bottom: 1px solid #e10600;
-}
-
-.sidebar {
-    background-color: #1a1a1a;
-    border-right: 1px solid #2a2a2a;
-}
-
-.nav-link {
-    color: #f0f0f0 !important;
-}
-
-    .nav-link:hover, .nav-link.active {
-        background-color: #e10600 ;
-        color: #fff ;
-        border-radius: 4px;
-    }
-
-.navbar-brand {
-    color: #e10600 ;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-}
-
-.navbar-dark {
-    background-color: #1a1a1a ;
-    border-bottom: 1px solid #e10600;
 }

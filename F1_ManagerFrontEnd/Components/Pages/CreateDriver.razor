@@ -1,52 +1,300 @@
 ﻿@page "/CreateDriver"
+@using F1_ManagerFrontEnd.Models
 @rendermode InteractiveServer
 @inject HttpClient Http
 @inject NavigationManager Navigation
 @inject IJSRuntime JS
 @inject UserStateService UserState
 
-<h3>Create first Driver</h3>
+<PageTitle>Create Driver - F1 Manager</PageTitle>
 
-<div class="mb-3 mt-3">
-    <label for="Voornaam">Voornaam:</label>
-    <input type="text" class="form-control" id="Voornaam" placeholder="Voornaam" @bind="_VoorNaam" />
+<div class="create-driver-page">
+
+    <div class="driver-card">
+
+        <div class="form-section">
+
+            <div class="form-header">
+
+                <span class="page-label">
+                    DRIVER ACADEMY
+                </span>
+
+                <h1>
+                    Create Driver
+                </h1>
+
+                <p>
+                    Sign a new talent to the team.
+                </p>
+
+            </div>
+
+            <EditForm Model="@DriverModel">
+
+                <div class="form-group">
+
+                    <label>First Name</label>
+
+                    <InputText @bind-Value="DriverModel.FirstName"
+                               class="form-input"
+                               placeholder="Mats" />
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Last Name</label>
+
+                    <InputText @bind-Value="DriverModel.LastName"
+                               class="form-input"
+                               placeholder="Van Het Einde" />
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Nationality</label>
+
+                    <InputSelect @bind-Value="DriverModel.Nationality"
+                                 class="form-input">
+
+                        <option value="">
+                            Select nationality
+                        </option>
+
+                        <option value="Belgium">
+                            Belgium
+                        </option>
+
+                        <option value="Netherlands">
+                            Netherlands
+                        </option>
+
+                        <option value="United Kingdom">
+                            United Kingdom
+                        </option>
+
+                        <option value="Germany">
+                            Germany
+                        </option>
+
+                        <option value="France">
+                            France
+                        </option>
+
+                    </InputSelect>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Age</label>
+
+                    <InputNumber @bind-Value="DriverModel.Age"
+                                 class="form-input" />
+
+                </div>
+
+                <button class="continue-button" @onclick="CreateNewDriver">
+                    Continue
+                </button>
+
+            </EditForm>
+
+        </div>
+
+    </div>
+
 </div>
 
-<div class="mb-3">
-    <label for="Achternaam">Achternaam:</label>
-    <input type="text" class="form-control" id="Achternaam" placeholder="Achternaam" @bind="_AchterNaam" />
-</div>
 
-<div class="mb-3">
-    <label for="Nationaliteit">Nationaliteit:</label>
-    <input type="text" class="form-control" id="Nationaliteit" placeholder="Nationaliteit" @bind="_natie" />
-</div>
 
-<div class="mb-3">
-    <label for="Leeftijd">Leeftijd:</label>
-    <input type="text" class="form-control" id="Leeftijd" placeholder="Leeftijd" @bind="_leeftijd" />
-</div>
-
-<button class="btn btn-primary" @onclick="() => CreateDriver1()">Create second driver</button>
-
-@code {
-    private string _VoorNaam = "";
-    private string _AchterNaam = "";
-    private string _natie = "";
-    private int _leeftijd = 0;
-    private int _rating = 0;
-    Random rng = new Random();
-    public async Task CreateDriver1()
-    {
-        //teamID opvragen van het team van de user
-        var urlTeamID = $"get/Team/from/userID?IDUser={UserState.UserId}";
-        var responseTeamID = await Http.GetAsync(urlTeamID);
-        var _IDTeam = await responseTeamID.Content.ReadFromJsonAsync<int>();
-        //generate random rating tussen 75 en 80
-        _rating = rng.Next(75, 81);
-        //driver aanmaken en deze koppelen aan het team van de user
-        var urlDriverCreate = $"Create/Driver?VoorNaamDriver={Uri.EscapeDataString(_VoorNaam)}&AchterNaamDriver={Uri.EscapeDataString(_AchterNaam)}&NationaliteitDriver={Uri.EscapeDataString(_natie)}&Leeftijd={_leeftijd}&ratingDriver={_rating}&TeamID={_IDTeam}";
-        var responseDriverCreate = await Http.PostAsync(urlDriverCreate, null);
-        Navigation.NavigateTo("/CreateDriver2");
+<style>
+    .create-driver-page {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px;
+        background: linear-gradient( to bottom, #050505, #101010);
+        color: white;
     }
-}
+
+    /* CARD */
+
+    .driver-card {
+/*         width: 100%;
+        max-width: 1200px;
+        display: grid;
+        grid-template-columns: 420px 1fr;
+        overflow: hidden; */
+        border-radius: 32px;
+        background: linear-gradient( to bottom, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+        border: 1px solid rgba(255,255,255,0.06);
+        backdrop-filter: blur(18px);
+    }
+
+    /* LEFT */
+
+/*     .preview-section {
+        padding: 50px;
+        background: linear-gradient( 135deg, rgba(255,0,0,0.15), rgba(0,0,0,0.4));
+        border-right: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .driver-avatar {
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 4rem;
+        background: linear-gradient( 135deg, #ff2d2d, #900000);
+        margin-bottom: 40px;
+    }
+
+    .driver-rating {
+        font-size: 4rem;
+        font-weight: 900;
+        margin-bottom: 10px;
+    }
+
+    .driver-potential {
+        color: #c5c5c5;
+        margin-bottom: 40px;
+    }
+
+    .driver-stats {
+        display: flex;
+        gap: 20px;
+    }
+
+    .stat-box {
+        flex: 1;
+        padding: 20px;
+        border-radius: 20px;
+        background: rgba(255,255,255,0.05);
+    }
+
+        .stat-box span {
+            display: block;
+            color: #999;
+            margin-bottom: 10px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .stat-box strong {
+            font-size: 1.8rem;
+        } */
+
+    /* RIGHT */
+
+    .form-section {
+        padding: 60px;
+    }
+
+    .page-label {
+        color: #ff3b30;
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 3px;
+    }
+
+    .form-header h1 {
+        margin: 20px 0 12px 0;
+        font-size: 3.5rem;
+        text-transform: uppercase;
+    }
+
+    .form-header p {
+        color: #9a9a9a;
+        margin-bottom: 50px;
+    }
+
+    /* FORM */
+
+    .form-group {
+        margin-bottom: 28px;
+    }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: #d8d8d8;
+            font-weight: 600;
+        }
+    /* INPUTS */
+
+    .form-input {
+        width: 100%;
+        height: 62px;
+        padding: 0 20px;
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 18px;
+        background: rgba(255,255,255,0.04);
+        color: white;
+        font-size: 1rem;
+        font-weight: 500;
+        outline: none;
+        transition: all 0.2s ease;
+        backdrop-filter: blur(10px);
+    }
+
+        .form-input::placeholder {
+            color: #7f7f7f;
+        }
+
+        .form-input:hover {
+            background: rgba(255,255,255,0.055);
+            border-color: rgba(255,255,255,0.12);
+        }
+
+        .form-input:focus {
+            background: rgba(255,255,255,0.06);
+            border-color: rgba(255,59,48,0.65);
+            box-shadow: 0 0 0 4px rgba(255,59,48,0.12);
+        }
+
+    /* SELECT */
+
+    select.form-input {
+        appearance: none;
+        cursor: pointer;
+    }
+
+        select.form-input option {
+            background: #111111;
+            color: white;
+        }
+
+    /* NUMBER INPUT */
+
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+        opacity: 0.4;
+    }
+
+    /* BUTTON */
+
+    .continue-button {
+        margin-top: 20px;
+        width: 100%;
+        height: 62px;
+        border: none;
+        border-radius: 18px;
+        background: linear-gradient( 135deg, #ff2d2d, #b80000);
+        color: white;
+        font-size: 1rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: 0.2s ease;
+    }
+
+        .continue-button:hover {
+            transform: translateY(-2px);
+        }
+</style>
