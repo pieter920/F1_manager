@@ -11,7 +11,7 @@ builder.Services.AddScoped(sp=>new HttpClient
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
-builder.Services.AddSingleton<UserStateService>();
+builder.Services.AddScoped<UserStateService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

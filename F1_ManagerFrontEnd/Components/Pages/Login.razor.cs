@@ -7,7 +7,7 @@ namespace F1_ManagerFrontEnd.Components.Pages
     public partial class Login
     {
         readonly LoginModel loginModel = new();
-        UserStateService user = new();
+        //UserStateService user = new();
 
         public async Task LoginUser()
         {
@@ -23,15 +23,17 @@ namespace F1_ManagerFrontEnd.Components.Pages
                     return;
                 }
 
-                user = userResponse;
+                UserState.UserId = userResponse.UserId;
+                UserState.Username = userResponse.Username;
+                UserState.TeamId = userResponse.TeamId;
 
-                if (user.UserTeam is null)
+                if (UserState.TeamId is null)
                 {
                     Navigation.NavigateTo("/CreateTeam");
                 }
                 else
                 {
-                    Navigation.NavigateTo("/Home");
+                    Navigation.NavigateTo("/Dashboard");
                 }
             }
             else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)

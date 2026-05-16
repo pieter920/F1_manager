@@ -1,0 +1,326 @@
+﻿@inject UserStateService UserState
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
+@rendermode InteractiveServer
+@page "/standings"
+@using F1_ManagerFrontEnd.Models
+
+<PageTitle>Standings - F1 Manager</PageTitle>
+
+<div class="standings-page">
+
+    <!-- HEADER -->
+
+    <div class="page-header">
+        <div class="header-actions">
+            <button class="back-button" @onclick="GoToDashboard">
+                <span class="back-arrow">←</span>
+                Dashboard
+            </button>
+        </div>
+
+        <span class="page-label">
+            WORLD CHAMPIONSHIP
+        </span>
+
+        <h1>
+            Standings
+        </h1>
+
+        <p>
+            Follow the battle for championship glory
+        </p>
+
+    </div>
+
+    <!-- DRIVER STANDINGS -->
+
+    <div class="standings-card">
+
+        <div class="card-title">
+            Driver Championship
+        </div>
+
+        <div class="standings-table">
+
+            <div class="table-header">
+
+                <div>POS</div>
+                <div>DRIVER</div>
+                <div>TEAM</div>
+                <div>PTS</div>
+
+            </div>
+
+            @foreach (var driver in DriverStandings)
+            {
+                <div class="table-row">
+
+                    <div class="position">
+                        @driver.Position
+                    </div>
+
+                    <div class="driver-name">
+                        @driver.Naam
+                    </div>
+
+                    <div class="team-name">
+                        @driver.Team
+                    </div>
+
+                    <div class="points">
+                        @driver.Punten
+                    </div>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+    <!-- CONSTRUCTOR STANDINGS -->
+
+    <div class="standings-card">
+
+        <div class="card-title">
+            Constructor Championship
+        </div>
+
+        <div class="standings-table">
+
+            <div class="table-header">
+
+                <div>POS</div>
+                <div>TEAM</div>
+                <div>NATIONALITY</div>
+                <div>PTS</div>
+
+            </div>
+
+            @foreach (var team in ConstructorStandings)
+            {
+                <div class="table-row">
+
+                    <div class="position">
+                        @team.Position
+                    </div>
+
+                    <div class="driver-name">
+                        @team.Naam
+                    </div>
+
+                    <div class="team-name">
+                        @team.Nationaliteit
+                    </div>
+
+                    <div class="points">
+                        @team.Punten
+                    </div>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</div>
+
+@code {
+
+    List<DriverSeasonStandingModel> DriverStandings = new();
+    List<ConstructorSeasonStandingModel> ConstructorStandings = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetDriverSeasonStandings();
+
+        await GetConstructorSeasonStandings();
+    }
+
+
+    public async Task GetDriverSeasonStandings()
+    {
+        var standingUrl = $"get/driver/standings?IDUser={UserState.UserId}";
+        var response = await Http.GetAsync(standingUrl);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var responsecontent = await response.Content.ReadFromJsonAsync<List<DriverSeasonStandingModel>>();
+            if (responsecontent is null)
+            {
+                await JS.InvokeVoidAsync("alert", "Onjuiste antwoord van server.");
+                return;
+            }
+
+            DriverStandings = responsecontent;
+        }
+    }
+
+    public async Task GetConstructorSeasonStandings()
+    {
+        var standingUrl = $"get/constructor/standings?IDUser={UserState.UserId}";
+        var response = await Http.GetAsync(standingUrl);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var responsecontent = await response.Content.ReadFromJsonAsync<List<ConstructorSeasonStandingModel>>();
+            if (responsecontent is null)
+            {
+                await JS.InvokeVoidAsync("alert", "Onjuiste antwoord van server.");
+                return;
+            }
+
+            ConstructorStandings = responsecontent;
+        }
+    }
+
+    void GoToDashboard()
+    {
+        Navigation.NavigateTo("/dashboard");
+    }
+}
+<style>
+    .standings-page {
+        min-height: 100vh;
+        padding: 40px;
+        background: linear-gradient( to bottom, #050505, #0f0f0f);
+        color: white;
+    }
+
+    /* HEADER */
+
+    .page-header {
+        margin-bottom: 50px;
+    }
+
+    .page-label {
+        color: #ff3b30;
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 3px;
+    }
+
+    .page-header h1 {
+        margin: 18px 0 10px 0;
+        font-size: 4rem;
+        text-transform: uppercase;
+    }
+
+    .page-header p {
+        color: #9a9a9a;
+        font-size: 1.05rem;
+    }
+
+    /* CARD */
+
+    .standings-card {
+        margin-bottom: 40px;
+        border-radius: 28px;
+        overflow: hidden;
+        background: linear-gradient( to bottom, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+        border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .card-title {
+        padding: 28px 30px;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        font-size: 1.1rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    /* TABLE */
+
+    .standings-table {
+        width: 100%;
+    }
+
+    .table-header,
+    .table-row {
+        display: grid;
+        grid-template-columns: 120px 2fr 2fr 120px;
+        align-items: center;
+    }
+
+    .table-header {
+        padding: 22px 30px;
+        background: rgba(255,255,255,0.03);
+        color: #8d8d8d;
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+
+    .table-row {
+        padding: 24px 30px;
+        border-top: 1px solid rgba(255,255,255,0.04);
+        transition: 0.2s ease;
+    }
+
+        .table-row:hover {
+            background: rgba(255,255,255,0.03);
+        }
+
+    /* CELLS */
+
+    .position {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #ff3b30;
+    }
+
+    .driver-name {
+        font-size: 1.05rem;
+        font-weight: 700;
+    }
+
+    .team-name {
+        color: #b1b1b1;
+    }
+
+    .points {
+        font-size: 1.1rem;
+        font-weight: 700;
+    }
+
+    /* HEADER ACTIONS */
+
+    .header-actions {
+        margin-bottom: 28px;
+    }
+
+    .back-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 18px;
+        border: none;
+        border-radius: 14px;
+        background: rgba(255,255,255,0.03);
+        color: #d8d8d8;
+        font-size: 0.9rem;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+        transition: all 0.18s ease;
+    }
+
+        .back-button:hover {
+            background: rgba(255,255,255,0.06);
+            color: white;
+            transform: translateX(-2px);
+        }
+
+    .back-arrow {
+        color: #ff3b30;
+        font-size: 0.95rem;
+        transition: transform 0.18s ease;
+    }
+
+    .back-button:hover .back-arrow {
+        transform: translateX(-3px);
+    }
+</style>

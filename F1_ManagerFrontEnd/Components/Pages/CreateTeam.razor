@@ -1,4 +1,4 @@
-﻿@page "/CreateTeam"
+﻿@* @page "/CreateTeam"
 @rendermode InteractiveServer
 @inject HttpClient Http
 @inject NavigationManager Navigation
@@ -44,3 +44,4 @@
         var responseSeizonCreate = await Http.PostAsync(urlSeizonCreate, null);
     }
 }
+ *@
