@@ -106,14 +106,20 @@
 
             <div class="race-info">
 
+                
                 <div>
-                    <span class="info-label">Laps</span>
-                    <span class="info-value">@track.LapsTrack</span>
+                    <span class="info-label">Begin datum</span>
+                    <span class="info-value">@track.Begindatum</span>
                 </div>
 
                 <div>
-                    <span class="info-label">Date</span>
-                    <span class="info-value">@track.Begindatum - @track.EindDatum</span>
+                    <span class="info-label">Eind Datum</span>
+                    <span class="info-value">@track.EindDatum</span>
+                </div>
+
+                <div>
+                    <span class="info-label">Laps</span>
+                    <span class="info-value">@track.LapsTrack</span>
                 </div>
 
             </div>
@@ -129,7 +135,20 @@
             </div>
             @if (Drivers.Count < 2)
             {
-                <button @onclick="OpenCreateDriver">+ ADD NEW DRIVER</button>
+                <div class="drivers-warning">
+
+                    <div class="warning-text">
+                        Your team needs 2 drivers before you can simulate race weekends.
+                    </div>
+
+                    <button class="add-driver-button"
+                            @onclick="OpenCreateDriver">
+
+                        + Add New Driver
+
+                    </button>
+
+                </div>
             }
             @foreach (var driver in Drivers)
             {
@@ -148,6 +167,10 @@
                     </div>
 
                     <div class="driver-stats">
+                        <div>
+                            <span>AGE</span>
+                            <strong>@driver.LeeftijdDriver</strong>
+                        </div>
 
                         <div>
                             <span>RTG</span>
@@ -335,10 +358,12 @@
     {
         if (Drivers.Count < 2)
         {
-            Navigation.NavigateTo("/CreateDriver");
+            await JS.InvokeVoidAsync(
+                "alert",
+                "You need at least 2 drivers before you can simulate a race weekend.");
+
             return;
         }
-        Console.WriteLine("Button clicked");
 
         await SimulateRace();
     }
@@ -593,6 +618,43 @@
 
         .driver-stats strong {
             font-size: 1.2rem;
+        }
+    /* DRIVER WARNING */
+
+    .drivers-warning {
+        margin-bottom: 24px;
+        padding: 22px;
+        border-radius: 20px;
+        background: linear-gradient( to right, rgba(255,59,48,0.12), rgba(255,59,48,0.04));
+        border: 1px solid rgba(255,59,48,0.18);
+    }
+
+    .warning-text {
+        margin-bottom: 18px;
+        color: #ffb3ae;
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+
+    /* ADD DRIVER BUTTON */
+
+    .add-driver-button {
+        height: 52px;
+        padding: 0 22px;
+        border: none;
+        border-radius: 16px;
+        background: rgba(255,255,255,0.06);
+        color: white;
+        font-size: 0.92rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+        .add-driver-button:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-1px);
         }
 
     /* SEASON */
