@@ -81,16 +81,6 @@ app.MapGet("/user/check", async (string username, string password, F1_ManagerDbC
     var user = await db.Users
         .FirstOrDefaultAsync(u => u.NameUser == username && u.PassWordUser == password);
 
-
-    //new
-    //if (user == null)
-    //{
-    //    return Results.Unauthorized();
-    //} else
-    //{
-    //    return user;
-    //};
-
     if (user == null)
         return Results.Unauthorized();
 
@@ -405,9 +395,6 @@ app.MapGet("get/raceweekend/result/by/user", async (int IDUser, F1_ManagerDbCont
 {
     var raceWeekend = await GetLatestRaceWeekendHasDriverResult(IDUser, db);
     if (raceWeekend == null) return Results.NotFound();
-
-    //var track = await db.Tracks.FindAsync(raceWeekend.Fktrack);
-    //if (track == null) return Results.NotFound();
 
     var results = raceWeekend.Select((d, index) => new RaceResult(
     Position: d.Positie,

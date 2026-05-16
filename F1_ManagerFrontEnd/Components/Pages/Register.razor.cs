@@ -27,7 +27,6 @@ namespace F1_ManagerFrontEnd.Components.Pages
 
             if (response.IsSuccessStatusCode)
             {
-                //create team - UPDATE THIS
                 var CreateTeamUrl = $"/Create/Team?NaamTeam={Uri.EscapeDataString(registerModel.TeamName)}&NationaliteitTeam={Uri.EscapeDataString(registerModel.Nation)}&UserID={UserState.UserId}";
                 var TeamResponse = await Http.PostAsync(CreateTeamUrl, null);
                 var CreateTeamUrlResponse = await TeamResponse.Content.ReadFromJsonAsync<TeamModel>();
@@ -52,14 +51,13 @@ namespace F1_ManagerFrontEnd.Components.Pages
 
         public async Task CreateCalender()
         {
-            //seizoen aanmaken en deze koppelen aan de user
             var urlSeizon = $"create/Eerste/seizon?IDUser={UserState.UserId}";
             var responseSeizon = await Http.PostAsync(urlSeizon, null);
-            //seizoenID opvragen van het aangemaakte seizoen
+
             var urlID = $"get/ID/from/SeizoenName?NaamSeizoen={Uri.EscapeDataString("Seizoen 2025")}";
             var ResponseID = await Http.GetAsync(urlID);
             var IDSeizon = await ResponseID.Content.ReadFromJsonAsync<int>();
-            //RaceCalendar aanmaken en deze koppelen aan het aangemaakte seizoen
+
             var urlSeizonCreate = $"create/Eerste/calendar?IDUser={UserState.UserId}&seasonID={IDSeizon}";
             var responseSeizonCreate = await Http.PostAsync(urlSeizonCreate, null);
         }

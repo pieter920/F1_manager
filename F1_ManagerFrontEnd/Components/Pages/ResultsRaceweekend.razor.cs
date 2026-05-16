@@ -5,7 +5,6 @@ namespace F1_ManagerFrontEnd.Components.Pages
     public partial class ResultsRaceweekend
     {
         private List<RaceResult>? _results;
-        private int _userTeamId;
         private TrackInfo? _track;
         protected override async Task OnInitializedAsync()
         {

@@ -14,14 +14,6 @@ namespace F1_ManagerFrontEnd.Components.Pages
 
         private int CarPerformance = 78;
 
-        //private string NextTrackName = "Albert Park";
-
-        //private string NextTrackCountry = "Australia";
-
-        //private int NextTrackLaps = 58;
-
-        //private string NextRaceDate = "14 Mar - 16 Mar";
-
         private int CompletedRaces = 0;
 
         private int TotalRaces = 24;
@@ -29,51 +21,16 @@ namespace F1_ManagerFrontEnd.Components.Pages
         private double percentage => (double)CompletedRaces / 24 * 100;
 
 
-
         protected override async Task OnInitializedAsync()
         {
-            // TEMP STATIC DATA
-            // Replace with API calls later
             await GetCurrentRaceCount();
 
-            //get team
             await GetTeam();
 
             await GetNextRace();
 
-            //get drivers 
             await GetDrivers();
-
-            // Drivers = new()
-            // {
-            //     new DriverViewModel
-            //     {
-            //         Name = "Mats Van Het Einde",
-            //         Nationality = "Belgium",
-            //         Rating = 25,
-            //         Confidence = 80
-            //     },
-
-            //     new DriverViewModel
-            //     {
-            //         Name = "Diogo Macado Lopes",
-            //         Nationality = "Portugal",
-            //         Rating = 67,
-            //         Confidence = 80
-            //     }
-            // };
         }
-
-        // public class DriverViewModel
-        // {
-        //     public string Name { get; set; } = "";
-
-        //     public string Nationality { get; set; } = "";
-
-        //     public int Rating { get; set; }
-
-        //     public int Confidence { get; set; }
-        // }
 
         private void OpenCreateDriver() => Navigation.NavigateTo("/CreateDriver");
 

@@ -7,7 +7,6 @@ namespace F1_ManagerFrontEnd.Components.Pages
     public partial class Login
     {
         readonly LoginModel loginModel = new();
-        //UserStateService user = new();
 
         public async Task LoginUser()
         {
