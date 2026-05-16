@@ -34,7 +34,115 @@
 
     </div>
 
-    <!-- DRIVER STANDINGS -->
+    <div class="standings-tabs">
+
+        <button class="tab-button @(ActiveTab == "drivers" ? "active" : "")"
+                @onclick='() => ActiveTab = "drivers"'>
+
+            Drivers
+
+        </button>
+
+        <button class="tab-button @(ActiveTab == "constructors" ? "active" : "")"
+                @onclick='() => ActiveTab = "constructors"'>
+
+            Constructors
+
+        </button>
+
+    </div>
+
+    @if (ActiveTab == "drivers")
+    {
+        <div class="standings-card">
+
+            <div class="card-title">
+                Driver Championship
+            </div>
+
+            <div class="standings-table">
+
+                <div class="table-header">
+                    <div>POS</div>
+                    <div>DRIVER</div>
+                    <div>TEAM</div>
+                    <div>PTS</div>
+                </div>
+
+                @foreach (var driver in DriverStandings)
+                {
+                    <div class="table-row">
+
+                        <div class="position">
+                            @driver.Position
+                        </div>
+
+                        <div class="driver-name">
+                            @driver.Naam
+                        </div>
+
+                        <div class="team-name">
+                            @driver.Team
+                        </div>
+
+                        <div class="points">
+                            @driver.Punten
+                        </div>
+
+                    </div>
+                }
+
+            </div>
+
+        </div>
+    }
+
+    @if (ActiveTab == "constructors")
+    {
+        <div class="standings-card">
+
+            <div class="card-title">
+                Constructor Championship
+            </div>
+
+            <div class="standings-table">
+
+                <div class="table-header">
+                    <div>POS</div>
+                    <div>TEAM</div>
+                    <div>NATIONALITY</div>
+                    <div>PTS</div>
+                </div>
+
+                @foreach (var team in ConstructorStandings)
+                {
+                    <div class="table-row">
+
+                        <div class="position">
+                            @team.Position
+                        </div>
+
+                        <div class="driver-name">
+                            @team.Naam
+                        </div>
+
+                        <div class="team-name">
+                            @team.Nationaliteit
+                        </div>
+
+                        <div class="points">
+                            @team.Punten
+                        </div>
+
+                    </div>
+                }
+
+            </div>
+
+        </div>
+    }
+
+@*     <!-- DRIVER STANDINGS -->
 
     <div class="standings-card">
 
@@ -124,7 +232,7 @@
 
         </div>
 
-    </div>
+    </div> *@
 
 </div>
 
@@ -132,6 +240,7 @@
 
     List<DriverSeasonStandingModel> DriverStandings = new();
     List<ConstructorSeasonStandingModel> ConstructorStandings = new();
+    string ActiveTab = "drivers";
 
     protected override async Task OnInitializedAsync()
     {
@@ -323,4 +432,34 @@
     .back-button:hover .back-arrow {
         transform: translateX(-3px);
     }
+
+    /* TABS */
+
+    .standings-tabs {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 28px;
+    }
+
+    .tab-button {
+        padding: 12px 22px;
+        border: none;
+        border-radius: 14px;
+        background: rgba(255,255,255,0.03);
+        color: #9f9f9f;
+        font-size: 0.92rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        transition: all 0.18s ease;
+    }
+
+        .tab-button:hover {
+            background: rgba(255,255,255,0.06);
+            color: white;
+        }
+
+        .tab-button.active {
+            background: #ff3b30;
+            color: white;
+        }
 </style>
