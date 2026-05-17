@@ -22,7 +22,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+var random = new Random();
 app.UseHttpsRedirection();
 //basic get request
 #region simple get request
@@ -315,7 +315,33 @@ app.MapGet("get/Team/from/userID", async (int IDUser, F1_ManagerDbContext db) =>
     var team = await GetTeamFromUser(IDUser, db);
     if (team == null)
         return Results.NotFound("Team not found for the user");
-    return Results.Ok(new { Id = team.Idteam, Naam = team.NaamTeam, Nationaliteit = team.NationaliteitTeam });
+    return Results.Ok(new { teamID = team.Idteam, teamName = team.NaamTeam, Nationality = team.NationaliteitTeam });
+});
+//create team for user
+app.MapPost("/Create/Auto", async (int IDTeam, F1_ManagerDbContext db) =>
+{
+    var AutoNames = new string[]
+    {
+        "DS2025",
+        "BS2005",
+        "MX5000",
+        "VEE950",
+        "GTS258",
+        "CPBR20",
+        "LB7FA2",
+        "PIG821",
+        "AEZ889",
+        "FNP771"
+    };
+    var Auto = new Auto 
+    { 
+        NaamAuto = AutoNames[random.Next(AutoNames.Length)],
+        PresatieAuto = random.Next(75, 81),
+        Fkteam = IDTeam
+    };
+    db.Autos.Add(Auto);
+    await db.SaveChangesAsync();
+    return Auto;
 });
 #endregion
 #region simulate raceweekend
@@ -331,10 +357,9 @@ app.MapGet("simulate/raceweekend", async (int IDUser, F1_ManagerDbContext db) =>
     if (raceweekend == null || teamUser == null)
         return Results.NotFound("No raceweekend found");
 
-    var userDrivers = await GetDriversFromtUserTeam(teamUser.Idteam, db);
+    var userDrivers = await GetDriversFromUserTeam(teamUser.Idteam, db);
     var allDrivers = await GetAllDefaultDrivers(db);
 
-    var random = new Random();
     var rankedDrivers = allDrivers
         .Concat(userDrivers)
         .OrderByDescending(d => d.Rating + random.Next(1, 20))
@@ -388,7 +413,12 @@ app.MapGet("get/constructor/standings", async (int IDUser, F1_ManagerDbContext d
 
 app.MapGet("Drivers/{TeamId}", async (int TeamId, F1_ManagerDbContext db) =>
 {
-    var drivers = await GetDriversFromtUserTeam(TeamId, db);
+    var drivers = await GetDriversFromUserTeam(TeamId, db);
+    return Results.Ok(drivers);
+});
+app.MapGet("Auto/{TeamId}", async (int TeamId, F1_ManagerDbContext db) =>
+{
+    var drivers = await GetAutoFromUserTeam(TeamId, db);
     return Results.Ok(drivers);
 });
 app.MapGet("get/raceweekend/result/by/user", async (int IDUser, F1_ManagerDbContext db) =>
@@ -448,12 +478,20 @@ static async Task<Team?> GetTeamFromUser(int IDUser, F1_ManagerDbContext db)
         .Where(t => t.Idteam == user.Fkteam)
         .FirstOrDefaultAsync();
 }
-static async Task<List<Driver>> GetDriversFromtUserTeam(int IDTeam, F1_ManagerDbContext db)
+static async Task<List<Driver>> GetDriversFromUserTeam(int IDTeam, F1_ManagerDbContext db)
 {
     return await db.Drivers
         .Where(d => d.Fkteam == IDTeam)
         .ToListAsync();
 }
+
+static async Task<Auto> GetAutoFromUserTeam(int IDTeam, F1_ManagerDbContext db)
+{
+    return await db.Autos
+        .Where(d => d.Fkteam == IDTeam)
+        .FirstOrDefaultAsync();
+}
+
 static async Task<List<Driver>> GetAllDefaultDrivers(F1_ManagerDbContext db)
 {
     return await db.Drivers

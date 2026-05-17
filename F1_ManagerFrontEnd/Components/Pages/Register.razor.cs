@@ -39,8 +39,8 @@ namespace F1_ManagerFrontEnd.Components.Pages
 
                 UserState.TeamId = CreateTeamUrlResponse.teamId;
 
-                await CreateCalender(); 
-
+                await CreateCalender();
+                await CreateAuto();
                 Navigation.NavigateTo("/dashboard");
             }
             else
@@ -60,6 +60,11 @@ namespace F1_ManagerFrontEnd.Components.Pages
 
             var urlSeizonCreate = $"create/Eerste/calendar?IDUser={UserState.UserId}&seasonID={IDSeizon}";
             var responseSeizonCreate = await Http.PostAsync(urlSeizonCreate, null);
+        }
+        public async Task CreateAuto()
+        {
+            var url = $"/Create/Auto?IDTeam={UserState.TeamId}";
+            var response = await Http.PostAsync(url, null);
         }
     }
 }

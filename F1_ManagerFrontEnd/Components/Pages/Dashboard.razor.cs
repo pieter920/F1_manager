@@ -9,10 +9,7 @@ namespace F1_ManagerFrontEnd.Components.Pages
 
         List<DriverModel> Drivers = new();
         Track track = new();
-
-        private string CarName = "DS2025";
-
-        private int CarPerformance = 78;
+        AutoModel autoModel = new();
 
         private int CompletedRaces = 0;
 
@@ -30,6 +27,8 @@ namespace F1_ManagerFrontEnd.Components.Pages
             await GetNextRace();
 
             await GetDrivers();
+
+            await GetAuto();
         }
 
         private void OpenCreateDriver() => Navigation.NavigateTo("/CreateDriver");
@@ -55,6 +54,25 @@ namespace F1_ManagerFrontEnd.Components.Pages
                 }
 
                 team = responsecontent;
+            }
+        }
+
+        public async Task GetAuto()
+        {
+            //get auto
+            var autoUrl = $"/Auto/{UserState.TeamId}";
+            var response = await Http.GetAsync(autoUrl);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responsecontent = await response.Content.ReadFromJsonAsync<AutoModel>();
+                if (responsecontent is null)
+                {
+                    await JS.InvokeVoidAsync("alert", "Onjuiste antwoord van server.");
+                    return;
+                }
+
+                autoModel = responsecontent;
             }
         }
 
