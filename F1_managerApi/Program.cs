@@ -104,7 +104,7 @@ app.MapPost("/user/register", async (string username, string password, F1_Manage
     db.Users.Add(User);
     await db.SaveChangesAsync();
 
-    return Results.Created($"/user/register", new {UserId = User.Iduser, username = User.NameUser });
+    return Results.Created($"/user/register", new { UserId = User.Iduser, username = User.NameUser });
 });
 
 #endregion
@@ -144,7 +144,7 @@ app.MapGet("get/ID/from/username", async (string username, F1_ManagerDbContext d
     return Results.Ok(user.Iduser);
 });
 //create team for user
-app.MapPost("/Create/Team", async (string NaamTeam, string NationaliteitTeam,int UserID, F1_ManagerDbContext db) =>
+app.MapPost("/Create/Team", async (string NaamTeam, string NationaliteitTeam, int UserID, F1_ManagerDbContext db) =>
 {
     var exists = await db.Teams
     .Where(ID => ID.Idteam <= 10)
@@ -163,7 +163,7 @@ app.MapPost("/Create/Team", async (string NaamTeam, string NationaliteitTeam,int
 
     if (user == null)
         return Results.NotFound("User not found");
-    user.Fkteam = Team.Idteam; 
+    user.Fkteam = Team.Idteam;
     await db.SaveChangesAsync();
 
     return Results.Created("/Create/Team", new
@@ -212,7 +212,7 @@ app.MapGet("get/raceweekends/by/ID", async (int IdraceWeekend, F1_ManagerDbConte
     return Results.Ok(result);
 });
 //get raceweekens by user ID and season Name
-app.MapGet("get/raceweekends/by/User/ID/and/season", async (int IDUser,string SeasonName, F1_ManagerDbContext db) =>
+app.MapGet("get/raceweekends/by/User/ID/and/season", async (int IDUser, string SeasonName, F1_ManagerDbContext db) =>
 {
     var result = await db.Raceweekends
         .Join(db.Seizoens,
@@ -292,7 +292,7 @@ app.MapGet("get/ID/from/SeizoenName", async (string NaamSeizoen, F1_ManagerDbCon
 #endregion
 #region create driver
 //Create driver for user
-app.MapPost("Create/Driver", async (string VoorNaamDriver, string AchterNaamDriver, string NationaliteitDriver,int Leeftijd ,int TeamID,int ratingDriver, F1_ManagerDbContext db) =>
+app.MapPost("Create/Driver", async (string VoorNaamDriver, string AchterNaamDriver, string NationaliteitDriver, int Leeftijd, int TeamID, int ratingDriver, F1_ManagerDbContext db) =>
 {
     var exists = await db.Drivers
     .Where(ID => ID.Iddriver <= 20)
@@ -300,10 +300,15 @@ app.MapPost("Create/Driver", async (string VoorNaamDriver, string AchterNaamDriv
     if (exists)
         return Results.Conflict("Driver already exists in real Life");
     //zet in databank
-    var Driver = new Driver { 
-        VoornaamDriver = VoorNaamDriver,AchternaamDriver = AchterNaamDriver, 
-        NationaliteitDriver = NationaliteitDriver, LeeftijdDriver = Leeftijd, 
-        Rating = ratingDriver,Fkteam = TeamID,Confidence = 80
+    var Driver = new Driver
+    {
+        VoornaamDriver = VoorNaamDriver,
+        AchternaamDriver = AchterNaamDriver,
+        NationaliteitDriver = NationaliteitDriver,
+        LeeftijdDriver = Leeftijd,
+        Rating = ratingDriver,
+        Fkteam = TeamID,
+        Confidence = 80
     };
     db.Drivers.Add(Driver);
     await db.SaveChangesAsync();
@@ -317,7 +322,7 @@ app.MapGet("get/Team/from/userID", async (int IDUser, F1_ManagerDbContext db) =>
         return Results.NotFound("Team not found for the user");
     return Results.Ok(new { teamID = team.Idteam, teamName = team.NaamTeam, Nationality = team.NationaliteitTeam });
 });
-//create team for user
+//create Auto for user
 app.MapPost("/Create/Auto", async (int IDTeam, F1_ManagerDbContext db) =>
 {
     var AutoNames = new string[]
@@ -333,8 +338,8 @@ app.MapPost("/Create/Auto", async (int IDTeam, F1_ManagerDbContext db) =>
         "AEZ889",
         "FNP771"
     };
-    var Auto = new Auto 
-    { 
+    var Auto = new Auto
+    {
         NaamAuto = AutoNames[random.Next(AutoNames.Length)],
         PresatieAuto = random.Next(75, 81),
         Fkteam = IDTeam
@@ -353,19 +358,24 @@ app.MapGet("simulate/raceweekend", async (int IDUser, F1_ManagerDbContext db) =>
         .FirstOrDefaultAsync();
 
     var teamUser = await GetTeamFromUser(IDUser, db);
+    //get auto prestatie
+    var IdAuto = await GetAutoFromUserTeam(teamUser.Idteam, db);
+    var PrestatieAuto = IdAuto.PresatieAuto;
+
+
 
     if (raceweekend == null || teamUser == null)
         return Results.NotFound("No raceweekend found");
 
     var userDrivers = await GetDriversFromUserTeam(teamUser.Idteam, db);
-    var allDrivers = await GetAllDefaultDrivers(db);
+    var DefaultDrivers = await GetAllDefaultDrivers(db);
 
-    var rankedDrivers = allDrivers
+    var rankedDrivers = DefaultDrivers
         .Concat(userDrivers)
-        .OrderByDescending(d => d.Rating + random.Next(1, 20))
+        .OrderByDescending(d => d.Rating + d.Confidence + PrestatieAuto + random.Next(50, 80))
         .ToList();
 
-    var PuntenVerdeling = new[] {25,18,15,12,10,8,6,4,2,1,0,0,0,0,0,0,0,0,0,0,0,0};
+    var PuntenVerdeling = new[] { 25, 18, 15, 12, 10, 8, 6, 4, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
     var results = rankedDrivers.Select((d, index) => new RaceResult(
         Position: index + 1,
@@ -377,9 +387,12 @@ app.MapGet("simulate/raceweekend", async (int IDUser, F1_ManagerDbContext db) =>
 
     await SaveRaceResults(results, raceweekend.IdraceWeekend, db);
     await CompleteRaceWeekend(raceweekend, db);
-    await UpdateDriverRatings(rankedDrivers, db);
+    await UpdateDriverRatings(userDrivers, db);
+    await UpdateDriverConfidence(userDrivers, db);
+    await UpdateAutoRatings(IdAuto, db);
     return Results.Ok(results);
 });
+
 app.MapGet("get/track/by/user", async (int IDUser, F1_ManagerDbContext db) =>
 {
     var raceWeekend = await GetNextRaceWeekendForUser(IDUser, db);
@@ -455,7 +468,7 @@ static async Task<Raceweekend?> GetPreviousRaceWeekendForUser(int IDUser, F1_Man
 {
     return await db.Raceweekends
         .Where(rw => rw.Fkuser == IDUser && rw.Completed == 1)
-        .OrderBy(rw => rw.IdraceWeekend)        
+        .OrderBy(rw => rw.IdraceWeekend)
         .LastOrDefaultAsync();
 }
 static async Task<Raceweekend?> GetNextRaceWeekendForUser(int IDUser, F1_ManagerDbContext db)
@@ -523,7 +536,7 @@ static async Task CompleteRaceWeekend(Raceweekend raceweekend, F1_ManagerDbConte
 static async Task<List<DriverStanding>> GetDriverStandingsForSeason(int IDUser, F1_ManagerDbContext db)
 {
     List<int> CompletedRaceWeekendIds = await db.Raceweekends
-.Where(rw => rw.Fkuser == IDUser && rw.Completed == 1).Select(rw => rw.IdraceWeekend).ToListAsync();
+    .Where(rw => rw.Fkuser == IDUser && rw.Completed == 1).Select(rw => rw.IdraceWeekend).ToListAsync();
 
     var rwhd = await db.Raceweekendhasdrivers
         .Include(rwhd => rwhd.FkraceWeekendNavigation)
@@ -624,51 +637,51 @@ static async Task<List<ConstructorStanding>> GetConstructorStandingsForSeason(in
 
     return standings;
 }
-//static async Task<List<DriverStanding>> GetDriverStandingsForSeason(int IDUser, F1_ManagerDbContext db)
-//{
-//    var seizoen = await db.Seizoens
-//        .Where(s => s.Fkuser == IDUser)
-//        .OrderByDescending(s => s.BeginDatum)
-//        .FirstOrDefaultAsync();
 
-//    if (seizoen == null) return new List<DriverStanding>();
-
-//    var rwhd = await db.Raceweekendhasdrivers
-//        .Include(rwhd => rwhd.FkraceWeekendNavigation)
-//        .Include(rwhd => rwhd.FkdriverNavigation)
-//            .ThenInclude(d => d.FkteamNavigation)
-//        .Where(rwhd => rwhd.FkraceWeekendNavigation.Fkseizoen == seizoen.Idseizoen)
-//        .ToListAsync();
-
-//    return rwhd
-//        .GroupBy(rwhd => rwhd.FkdriverNavigation)
-//        .Select(ds => new DriverStanding(
-//            ds.Key.Iddriver,
-//            ds.Key.VoornaamDriver + " " + ds.Key.AchternaamDriver,
-//            ds.Key.FkteamNavigation.NaamTeam,
-//            ds.Sum(x => x.Punten)
-//        ))
-//        .OrderByDescending(d => d.Punten)
-//        .ToList();
-//}
+#region update ratings
 static async Task UpdateDriverRatings(List<Driver> drivers, F1_ManagerDbContext db)
 {
     var random = new Random();
+    int randomValue = random.Next(100);
     foreach (var driver in drivers)
     {
         if (driver.LeeftijdDriver < 30)
         {
-            if (random.Next(100) < 45)
+            if (randomValue < 45)
                 driver.Rating = Math.Min(99, driver.Rating + 1);
         }
         else if (driver.LeeftijdDriver > 35)
         {
-            if (random.Next(100) < 45)
+            if (randomValue < 45)
                 driver.Rating = Math.Max(1, driver.Rating - 1);
         }
     }
     await db.SaveChangesAsync();
 }
+
+static async Task UpdateAutoRatings(Auto auto, F1_ManagerDbContext db)
+{
+    var random = new Random();
+    int randomValue = random.Next(100);
+    if (randomValue < 50)
+        auto.PresatieAuto = Math.Min(99, auto.PresatieAuto + 1);
+    await db.SaveChangesAsync();
+}
+
+static async Task UpdateDriverConfidence(List<Driver> drivers, F1_ManagerDbContext db)
+{
+    var random = new Random();
+    int randomValue = random.Next(100);
+    foreach (var driver in drivers)
+    {
+        if (randomValue < 55)
+            driver.Confidence = Math.Min(99, driver.Confidence + 1);
+        else
+            driver.Confidence = Math.Max(1, driver.Confidence - 1);
+    }
+    await db.SaveChangesAsync();
+}
+#endregion
 #endregion
 
 
