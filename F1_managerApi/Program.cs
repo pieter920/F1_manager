@@ -71,7 +71,6 @@ app.MapGet("get/track/per/ID", async (int TrackID, F1_ManagerDbContext db) =>
     var items = await db.Tracks.Where(pbl => pbl.Idtrack == TrackID).ToListAsync();
     return Results.Ok(items);
 });
-
 #endregion
 //user checks and register
 #region user checks and register
@@ -110,7 +109,7 @@ app.MapPost("/user/register", async (string username, string password, F1_Manage
 #endregion
 //filter on user ID
 #region get stuf based on user
-//get all teams from user - WHY MULTIPLE TEAMS?
+//get all teams from user
 app.MapGet("get/Teams/from/user", async (int IDUser, F1_ManagerDbContext db) =>
 {
     List<string> naamTeams = await db.Teams
@@ -153,7 +152,6 @@ app.MapPost("/Create/Team", async (string NaamTeam, string NationaliteitTeam, in
     if (exists)
         return Results.Conflict("Team already exists F1_manager");
 
-    //zet in databank
     var Team = new Team { NaamTeam = NaamTeam, NationaliteitTeam = NationaliteitTeam };
 
     db.Teams.Add(Team);
@@ -184,12 +182,6 @@ app.MapGet("get/completed/raceweekends/from/user", async (int IDUser, F1_Manager
     .Where(rw => rw.Fkuser == IDUser && rw.Completed == 1).CountAsync();
     return CompletedRaceWeekends;
 });
-//app.MapGet("get/completed/raceweekend/ids/from/user", async (int IDUser, F1_ManagerDbContext db) =>
-//{
-//    List<int> CompletedRaceWeekendIds = await db.Raceweekends
-//    .Where(rw => rw.Fkuser == IDUser && rw.Completed == 1).Select(rw => rw.IdraceWeekend).ToListAsync();
-//    return CompletedRaceWeekendIds;
-//});
 //get raceweekens by ID
 app.MapGet("get/raceweekends/by/ID", async (int IdraceWeekend, F1_ManagerDbContext db) =>
 {
@@ -299,7 +291,6 @@ app.MapPost("Create/Driver", async (string VoorNaamDriver, string AchterNaamDriv
     .AnyAsync(pbl => pbl.VoornaamDriver == VoorNaamDriver);
     if (exists)
         return Results.Conflict("Driver already exists in real Life");
-    //zet in databank
     var Driver = new Driver
     {
         VoornaamDriver = VoorNaamDriver,
@@ -362,8 +353,6 @@ app.MapGet("simulate/raceweekend", async (int IDUser, F1_ManagerDbContext db) =>
     var IdAuto = await GetAutoFromUserTeam(teamUser.Idteam, db);
     var PrestatieAuto = IdAuto.PresatieAuto;
 
-
-
     if (raceweekend == null || teamUser == null)
         return Results.NotFound("No raceweekend found");
 
@@ -376,7 +365,7 @@ app.MapGet("simulate/raceweekend", async (int IDUser, F1_ManagerDbContext db) =>
         .ToList();
 
     var PuntenVerdeling = new[] { 25, 18, 15, 12, 10, 8, 6, 4, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-
+    //rank drivers based on rating, confidence and auto prestatie
     var results = rankedDrivers.Select((d, index) => new RaceResult(
         Position: index + 1,
         DriverId: d.Iddriver,
@@ -403,6 +392,7 @@ app.MapGet("get/track/by/user", async (int IDUser, F1_ManagerDbContext db) =>
 
     return Results.Ok(new { track.NaamTrack, track.LandTrack, track.LapsTrack, raceWeekend.BeginDatum, raceWeekend.EindDatum });
 });
+
 app.MapGet("get/Previous/track/by/user", async (int IDUser, F1_ManagerDbContext db) =>
 {
     var raceWeekend = await GetPreviousRaceWeekendForUser(IDUser, db);
@@ -413,11 +403,13 @@ app.MapGet("get/Previous/track/by/user", async (int IDUser, F1_ManagerDbContext 
 
     return Results.Ok(new { track.NaamTrack, track.LandTrack, track.LapsTrack, raceWeekend.BeginDatum, raceWeekend.EindDatum });
 });
+
 app.MapGet("get/driver/standings", async (int IDUser, F1_ManagerDbContext db) =>
 {
     var standings = await GetDriverStandingsForSeason(IDUser, db);
     return Results.Ok(standings);
 });
+
 app.MapGet("get/constructor/standings", async (int IDUser, F1_ManagerDbContext db) =>
 {
     var standings = await GetConstructorStandingsForSeason(IDUser, db);
@@ -429,11 +421,13 @@ app.MapGet("Drivers/{TeamId}", async (int TeamId, F1_ManagerDbContext db) =>
     var drivers = await GetDriversFromUserTeam(TeamId, db);
     return Results.Ok(drivers);
 });
+
 app.MapGet("Auto/{TeamId}", async (int TeamId, F1_ManagerDbContext db) =>
 {
     var drivers = await GetAutoFromUserTeam(TeamId, db);
     return Results.Ok(drivers);
 });
+
 app.MapGet("get/raceweekend/result/by/user", async (int IDUser, F1_ManagerDbContext db) =>
 {
     var raceWeekend = await GetLatestRaceWeekendHasDriverResult(IDUser, db);

@@ -140,7 +140,6 @@ namespace F1_ManagerFrontEnd.Components.Pages
 
         private List<RaceResult>? _results;
         private int _userTeamId;
-        //private TrackInfo? _track;
 
         private async Task SimulateRace()
         {
@@ -158,7 +157,6 @@ namespace F1_ManagerFrontEnd.Components.Pages
 
             Navigation.NavigateTo("/ResultRaceweekend");
         }
-        //private void GoToRaceweekend() => Navigation.NavigateTo("/ResultRaceweekend");
 
         private bool _showDropdown = false;
 
