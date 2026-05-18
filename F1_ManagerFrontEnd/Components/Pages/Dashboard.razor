@@ -23,7 +23,7 @@
             <h1>
                 <div class="dropdown" @onclick:stopPropagation>
                     <a @onclick="ToggleDropdown" style="cursor:pointer;">
-                        @* <span style="font-size:large">▼</span>  *@@UserState.Username
+                        @UserState.Username
                     </a>
                     @if (_showDropdown)
                     {
@@ -32,7 +32,6 @@
                         </div>
                     }
                 </div>
-                @* @UserState.Username *@
             </h1>
         </div>
 
@@ -189,7 +188,7 @@
 
         </div>
 
-        <!-- SEASON  TODO: IMPLEMENT SOMETHING DECENT-->
+        <!-- SEASON -->
 
         <div class="dashboard-card season-card"
              @onclick="GoToNextPage">
