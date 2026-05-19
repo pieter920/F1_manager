@@ -455,7 +455,7 @@ static async Task<List<Raceweekendhasdriver>> GetLatestRaceWeekendHasDriverResul
 
     return await db.Raceweekendhasdrivers
         .Where(x => x.FkraceWeekend == raceWeekendId)
-        .Include(d => d.FkdriverNavigation).ThenInclude(t => t.FkteamNavigation)
+        .Include(d => d.FkdriverNavigation).ThenInclude(t => t.FkteamNavigation).OrderBy(d => d.Positie)
         .ToListAsync();
 }
 static async Task<Raceweekend?> GetPreviousRaceWeekendForUser(int IDUser, F1_ManagerDbContext db)
