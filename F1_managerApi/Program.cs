@@ -365,7 +365,7 @@ app.MapGet("simulate/raceweekend", async (int IDUser, F1_ManagerDbContext db) =>
         .ToList();
 
     var PuntenVerdeling = new[] { 25, 18, 15, 12, 10, 8, 6, 4, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    //rank drivers based on rating, confidence and auto prestatie
+
     var results = rankedDrivers.Select((d, index) => new RaceResult(
         Position: index + 1,
         DriverId: d.Iddriver,
